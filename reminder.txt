@@ -1,0 +1,23 @@
+https://github.com/Quarter-Quarten/Test-for-compiling
+仓库名
+
+/storage/emulated/0/Documents/gdextension/
+路径
+
+git remote add origin git@github.com:Quarter-Quarten/Test-for-compiling.git
+git add .
+git commit
+git commit -m "提交说明信息"
+
++---[RSA 4096]----+
+|  E..   oo+o..o  |
+| . oo    ooo.o.= |
+|  .  =. ....oo* .|
+|    = o+.  o o++ |
+|   + o..S .  ....|
+|  o +  .      .. |
+| . + o      o.  o|
+|    *      ..= ..|
+|     o      +..  |
++----[SHA256]-----+
+一个密码？
