@@ -16,8 +16,6 @@ jobs:
       # 1. 拉取你的代码
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          path: src
 
       # 2. 安装 SCons（需要 Python，ubuntu 镜像已自带 Python3）
       - name: Install SCons
@@ -33,5 +31,5 @@ jobs:
         with:
           name: libopentower_debug_arm64.so
           path: |
-            *.so
+            src/*.so
             # 如果你的 .so 生成在特定目录，如 build/，改成 build/*.so
