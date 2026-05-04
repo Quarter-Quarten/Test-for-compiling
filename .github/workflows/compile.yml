@@ -1,0 +1,37 @@
+name: Build Shared Library (.so) with SCons
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  # 也可以加上手动触发
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest      # .so 是 Linux 下的动态库格式，必须用 Linux 环境
+
+    steps:
+      # 1. 拉取你的代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      # 2. 安装 SCons（需要 Python，ubuntu 镜像已自带 Python3）
+      - name: Install SCons
+        run: pip install scons
+
+      # 3. 执行 SCons 编译（假设你的 SConstruct 文件在仓库根目录）
+      - name: Build .so with SCons
+        run: scons
+
+      # 4. （可选）把编译出来的 .so 上传为构建产物，方便下载
+      - name: Upload .so artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libopentower_debug_arm64.so
+          path: |
+            *.so
+            # 如果你的 .so 生成在特定目录，如 build/，改成 build/*.so
