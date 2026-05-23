@@ -31,6 +31,8 @@ void open_tower_library_init(ModuleInitializationLevel p_level) {
     ClassDB::register_class<WrapGridRect2>();
     ClassDB::register_class<WrapGridRect2i>();
     ClassDB::register_class<WrapGridVector2i>();
+    
+    ClassDB::register_class<World>();
 }
 
 void open_tower_uninitialize_module(ModuleInitializationLevel p_level) {
