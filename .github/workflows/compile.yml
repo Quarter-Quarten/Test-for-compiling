@@ -5,45 +5,43 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  workflow_dispatch:   # 手动触发
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 拉取代码（包含子模块）
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # 2. 安装 Android NDK（新增）
-      - name: Setup Android NDK
+      # 使用系统预装的 Android SDK 来安装 godot-cpp 所需的 NDK 版本
+      - name: Install required Android NDK
         run: |
-          wget -q https://dl.google.com/android/repository/android-ndk-r23c-linux.zip
-          unzip -qq android-ndk-r23c-linux.zip
-          echo "ANDROID_NDK_ROOT=${{ github.workspace }}/android-ndk-r23c" >> $GITHUB_ENV
+          # 接受 SDK 许可证
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+          # 安装 NDK 28.1.13356709
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;28.1.13356709"
+          # 设置 ANDROID_NDK_ROOT 环境变量
+          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/28.1.13356709" >> $GITHUB_ENV
 
-      # 3. 缓存 godot-cpp 依赖（可以保留，会加速后续编译）
       - name: Cache godot-cpp
         uses: actions/cache@v4
         with:
           path: godot-cpp
           key: ${{ runner.os }}-godot-cpp-${{ hashFiles('godot-cpp/**') }}
 
-      # 4. 安装 SCons
       - name: Install SCons
         run: pip install scons
 
-      # 5. 编译 Android arm64 .so（修改）
       - name: Build .so for Android arm64
         run: scons platform=android arch=arm64 target=template_debug
 
-      # 6. 上传构建产物（路径可微调）
       - name: Upload .so artifact
         uses: actions/upload-artifact@v4
         with:
           name: libopentower-android-arm64
-          path: bin/*.android.*.so   # 更精准的匹配
+          path: bin/*.android.*.so
           if-no-files-found: error
