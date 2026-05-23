@@ -15,7 +15,7 @@ ssh-keygen -t rsa -b 4096 -C "3431442688@qq.com"
 密钥生成
 
 git add .
-git commit -m "test4"
+git commit -m "test5"
 git push origin master
 
 +---[RSA 4096]----+

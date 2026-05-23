@@ -16,27 +16,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          submodules: recursive   # 如果 godot-cpp 是子模块，必须加这行
+          submodules: recursive
 
-      # 2. 缓存 godot-cpp 依赖
+      # 2. 安装 Android NDK（新增）
+      - name: Setup Android NDK
+        run: |
+          wget -q https://dl.google.com/android/repository/android-ndk-r23c-linux.zip
+          unzip -qq android-ndk-r23c-linux.zip
+          echo "ANDROID_NDK_ROOT=${{ github.workspace }}/android-ndk-r23c" >> $GITHUB_ENV
+
+      # 3. 缓存 godot-cpp 依赖（可以保留，会加速后续编译）
       - name: Cache godot-cpp
         uses: actions/cache@v4
         with:
           path: godot-cpp
           key: ${{ runner.os }}-godot-cpp-${{ hashFiles('godot-cpp/**') }}
 
-      # 3. 安装 SCons
+      # 4. 安装 SCons
       - name: Install SCons
         run: pip install scons
 
-      # 4. 编译 .so
+      # 5. 编译 Android arm64 .so（修改）
       - name: Build .so for Android arm64
-        run: scons platform=android
+        run: scons platform=android arch=arm64 target=template_debug
 
-      # 5. 上传构建产物
+      # 6. 上传构建产物（路径可微调）
       - name: Upload .so artifact
         uses: actions/upload-artifact@v4
         with:
-          name: libopentower_debug_arm64.so
-          path: bin/*.so
+          name: libopentower-android-arm64
+          path: bin/*.android.*.so   # 更精准的匹配
           if-no-files-found: error
