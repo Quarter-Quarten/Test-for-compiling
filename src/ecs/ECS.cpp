@@ -1,4 +1,3 @@
-// ecs.cpp
 #include "ecs.h"
 #include <algorithm>
 #include <stdexcept>
