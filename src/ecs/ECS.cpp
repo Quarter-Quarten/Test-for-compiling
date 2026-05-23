@@ -1,4 +1,4 @@
-#include "tools/ecs.h"
+#include "tools/ecs/ecs.h"
 #include <algorithm>
 #include <stdexcept>
 
