@@ -31,5 +31,5 @@ jobs:
         with:
           name: libopentower_debug_arm64.so
           path: |
-            src/*.so
+            bin/*.so
             # 如果你的 .so 生成在特定目录，如 build/，改成 build/*.so

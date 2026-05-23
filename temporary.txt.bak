@@ -1,0 +1,9 @@
+cd /storage/emulated/0/Documents/gdextension/
+scons platform=android
+
+/data/data/com.termux/files/home/android-ndk-r28c/
+
+
+echo 'export ANDROID_HOME=/storage/emulated/0/Documents/gdextension/termux-ndk >> ~/.bashrc
+echo 'export ANDROID_NDK_HOME=/storage/emulated/0/Documents/gdextension/termux-ndk >> ~/.bashrc
+source ~/.bashrc

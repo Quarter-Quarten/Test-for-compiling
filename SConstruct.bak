@@ -26,17 +26,10 @@ if target_platform == "windows":
         env.Append(CCFLAGS=["/O2", "/MD"])
     else:
         env.Append(CCFLAGS=["/Zi", "/MDd"])
+        
 elif target_platform == "android":
-    # 检查系统环境变量
-    required_vars = ["ANDROID_NDK_ROOT", "ANDROID_SDK_ROOT", "JAVA_HOME"]
-    for var in required_vars:
-        val = os.getenv(var)
-        if val is None:
-            print(f"ERROR: {var} is not set!")
-            Exit(1)
-        env["ENV"][var] = val
-
-    env.Append(CCFLAGS=["-fPIC"])   
+    # Android 特定设置
+    env.Append(CCFLAGS=["-fPIC"])
 
 # 构建库文件
 # 根据平台和配置生成对应的文件名

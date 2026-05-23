@@ -1,6 +1,9 @@
-git config --global user.name "你的GitHub用户名"
-git config --global user.email "你的注册邮箱"
+cd /storage/emulated/0/Documents/gdextension/
+scons platform=android
 
-ssh-keygen -t rsa -b 4096 -C "你的邮箱"
-# 一路回车，使用默认设置
-cat ~/.ssh/id_rsa.pub
+/data/data/com.termux/files/home/android-ndk-r28c/
+
+
+echo 'export ANDROID_HOME=$HOME/termux-ndk >> ~/.bashrc
+echo 'export ANDROID_NDK_HOME=$HOME/termux-ndk >> ~/.bashrc
+source ~/.bashrc
