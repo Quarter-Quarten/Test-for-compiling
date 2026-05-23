@@ -6,6 +6,7 @@
 #include "tools/Lighting/Lighting.h"
 #include "tools/Lighting/WarpGrid.h"
 #include "tools/DHC/DHC.h"
+#include "ecs/ECS.h"
 
 using namespace godot;
 
