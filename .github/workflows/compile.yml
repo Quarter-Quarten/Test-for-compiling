@@ -2,10 +2,6 @@ name: Build Shared Library (.so) with SCons
 
 on:
   push:
-name: Build Shared Library (.so) with SCons
-
-on:
-  push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
