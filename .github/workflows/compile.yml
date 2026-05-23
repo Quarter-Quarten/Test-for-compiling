@@ -17,22 +17,37 @@ jobs:
         with:
           submodules: recursive
 
-      # 使用系统预装的 Android SDK 来安装 godot-cpp 所需的 NDK 版本
-      - name: Install required Android NDK
+
+
+      # ----- NDK配置 -----
+      # 尝试从缓存恢复 NDK
+      - name: Cache Android NDK
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/lib/android/sdk/ndk/28.1.13356709
+          key: ndk-28.1.13356709-v1   # v1 可手动递增以强制刷新缓存
+      # 缓存未命中时用 sdkmanager 安装
+      - name: Install required Android NDK (if not cached)
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: |
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;28.1.13356709"
-          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/28.1.13356709" >> $GITHUB_ENV
+      # 配置 NDK_ROOT
+      - name: Set ANDROID_NDK_ROOT
+        run: echo "ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/28.1.13356709" >> $GITHUB_ENV
 
+
+
+      # ----- Scons配置 -----
+      # 安装 Scons
       - name: Install SCons
         run: pip install scons
-
       # 设置 SCons 缓存目录（分文件缓存）
       - name: Setup SCons cache
         run: |
           mkdir -p scons_cache
           echo "SCONS_CACHE=scons_cache" >> $GITHUB_ENV
-
       # 缓存 SCons 编译中间文件（.o 等）
       - name: Cache SCons build files
         uses: actions/cache@v4
@@ -42,9 +57,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-scons-cache-
 
+      # 编译
       - name: Build .so for Android arm64
         run: scons platform=android arch=arm64 target=template_debug
 
+      # 上传
       - name: Upload .so artifact
         uses: actions/upload-artifact@v4
         with:
