@@ -1,5 +1,13 @@
 name: Build Shared Library (.so) with SCons
 
+# 缓存 godot-cpp 依赖示例
+- name: Cache godot-cpp
+  uses: actions/cache@v3  # 使用官方缓存 Action
+  with:
+    path: godot-cpp       # 要缓存的文件夹
+    key: ${{ runner.os }}-godot-cpp-${{ hashFiles('godot-cpp/**') }} 
+    # 缓存键，基于系统及godot-cpp文件夹内所有文件的内容哈希值生成
+
 on:
   push:
     branches: [ "master" ]
