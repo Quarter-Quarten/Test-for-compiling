@@ -6,7 +6,7 @@
 #include "tools/Lighting/Lighting.h"
 #include "tools/Lighting/WarpGrid.h"
 #include "tools/DHC/DHC.h"
-#include "ecs/ECS.h"
+// #include "ecs/ECS.h"
 
 using namespace godot;
 
@@ -33,7 +33,7 @@ void open_tower_library_init(ModuleInitializationLevel p_level) {
     ClassDB::register_class<WrapGridRect2i>();
     ClassDB::register_class<WrapGridVector2i>();
     
-    ClassDB::register_class<World>();
+    //ClassDB::register_class<World>();
 }
 
 void open_tower_uninitialize_module(ModuleInitializationLevel p_level) {
