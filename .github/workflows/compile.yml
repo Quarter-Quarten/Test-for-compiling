@@ -1,43 +1,42 @@
 name: Build Shared Library (.so) with SCons
 
-# 缓存 godot-cpp 依赖示例
-- name: Cache godot-cpp
-  uses: actions/cache@v3  # 使用官方缓存 Action
-  with:
-    path: godot-cpp       # 要缓存的文件夹
-    key: ${{ runner.os }}-godot-cpp-${{ hashFiles('godot-cpp/**') }} 
-    # 缓存键，基于系统及godot-cpp文件夹内所有文件的内容哈希值生成
-
 on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  # 也可以加上手动触发
-  workflow_dispatch:
+  workflow_dispatch:   # 手动触发
 
 jobs:
   build:
-    runs-on: ubuntu-latest      # .so 是 Linux 下的动态库格式，必须用 Linux 环境
+    runs-on: ubuntu-latest
 
     steps:
-      # 1. 拉取你的代码
+      # 1. 拉取代码（包含子模块）
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive   # 如果 godot-cpp 是子模块，必须加这行
 
-      # 2. 安装 SCons（需要 Python，ubuntu 镜像已自带 Python3）
+      # 2. 缓存 godot-cpp 依赖
+      - name: Cache godot-cpp
+        uses: actions/cache@v4
+        with:
+          path: godot-cpp
+          key: ${{ runner.os }}-godot-cpp-${{ hashFiles('godot-cpp/**') }}
+
+      # 3. 安装 SCons
       - name: Install SCons
         run: pip install scons
 
-      # 3. 执行 SCons 编译（假设你的 SConstruct 文件在仓库根目录）
+      # 4. 编译 .so
       - name: Build .so with SCons
         run: scons
 
-      # 4. （可选）把编译出来的 .so 上传为构建产物，方便下载
+      # 5. 上传构建产物
       - name: Upload .so artifact
         uses: actions/upload-artifact@v4
         with:
           name: libopentower_debug_arm64.so
-          path: |
-            bin/*.so
-            # 如果你的 .so 生成在特定目录，如 build/，改成 build/*.so
+          path: bin/*.so
+          if-no-files-found: error
