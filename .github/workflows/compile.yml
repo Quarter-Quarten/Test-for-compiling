@@ -2,6 +2,10 @@ name: Build Shared Library (.so) with SCons
 
 on:
   push:
+name: Build Shared Library (.so) with SCons
+
+on:
+  push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
@@ -20,21 +24,27 @@ jobs:
       # 使用系统预装的 Android SDK 来安装 godot-cpp 所需的 NDK 版本
       - name: Install required Android NDK
         run: |
-          # 接受 SDK 许可证
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-          # 安装 NDK 28.1.13356709
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;28.1.13356709"
-          # 设置 ANDROID_NDK_ROOT 环境变量
           echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/28.1.13356709" >> $GITHUB_ENV
-
-      - name: Cache godot-cpp
-        uses: actions/cache@v4
-        with:
-          path: godot-cpp
-          key: ${{ runner.os }}-godot-cpp-${{ hashFiles('godot-cpp/**') }}
 
       - name: Install SCons
         run: pip install scons
+
+      # 设置 SCons 缓存目录（分文件缓存）
+      - name: Setup SCons cache
+        run: |
+          mkdir -p scons_cache
+          echo "SCONS_CACHE=scons_cache" >> $GITHUB_ENV
+
+      # 缓存 SCons 编译中间文件（.o 等）
+      - name: Cache SCons build files
+        uses: actions/cache@v4
+        with:
+          path: scons_cache
+          key: ${{ runner.os }}-scons-cache-${{ hashFiles('src/**', 'include/**', 'godot-cpp/**') }}
+          restore-keys: |
+            ${{ runner.os }}-scons-cache-
 
       - name: Build .so for Android arm64
         run: scons platform=android arch=arm64 target=template_debug
