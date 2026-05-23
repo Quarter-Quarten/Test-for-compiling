@@ -30,8 +30,8 @@ jobs:
         run: pip install scons
 
       # 4. 编译 .so
-      - name: Build .so with SCons
-        run: scons
+      - name: Build .so for Android arm64
+        run: scons platform=android
 
       # 5. 上传构建产物
       - name: Upload .so artifact
