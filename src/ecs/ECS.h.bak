@@ -88,7 +88,7 @@ private:
     // 将实体从旧块移除（压缩移动最后一个实体）
     void remove_from_chunk(Entity entity);
     
-    void _bind_methods();
+    void _bind_methods
 };
 
 // ---------- 移动系统 ----------
