@@ -1,9 +1,10 @@
 #pragma once
 
+#include "ecs/Components"
+
 #include <cstdint>
 #include <vector>
 #include <unordered_map>
-#include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/classes/object.hpp>
 
 using namespace godot;
@@ -24,14 +25,6 @@ ComponentTypeID GetComponentTypeID() {
     static const ComponentTypeID id = std::hash<std::string>()(typeid(T).name());
     return id;
 }
-
-// ---------- 组件定义 ----------
-struct Position {
-    Vector2 value;
-};
-struct Velocity {
-    Vector2 value;
-};
 
 // ---------- Chunk：存储固定数量实体的组件数据 ----------
 static constexpr size_t CHUNK_CAPACITY = 64;
