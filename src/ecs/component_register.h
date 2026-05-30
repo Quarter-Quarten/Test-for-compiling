@@ -6,8 +6,9 @@
 #include <cassert>
 
 namespace comp {
-    using ComponentID = std::uint16_t;
-    constexpr ComponentID kMaxComponentID = 65535;
+    using ComponentID = std::uint8_t;
+    constexpr size_t kMaxComponentCount = 256;
+    constexpr ComponentID kMaxComponentID = 255;
     
     // 构造函数与析构函数指针类型
     using ComponentConstructor = void(*)(void*);
@@ -15,6 +16,9 @@ namespace comp {
     
     struct ComponentMeta {
         ComponentID id;
+        size_t size;
+        size_t align;
+        
         ComponentConstructor constructor;  // 用于 placement new 的构造函数
         ComponentDestructor destructor;    // 用于显式调用析构函数
     };
@@ -25,6 +29,9 @@ namespace comp {
         static ComponentID register_component() {
             ComponentMeta meta;
             meta.id = get_next_id();
+            meta.size = sizeof(T);
+            meta.align = alignof(T);
+            
             // 利用无捕获 lambda 生成函数指针
             meta.constructor = [](void* ptr) { new(ptr) T(); };
             meta.destructor = [](void* ptr) { static_cast<T*>(ptr)->~T(); };
@@ -32,13 +39,18 @@ namespace comp {
             components.push_back(meta);
             return meta.id;
         }
+        
+        static const ComponentMeta& get_meta(ComponentID id) {
+            assert(id < components.size());
+            return components[id];
+        }
 
     private:
         static inline std::vector<ComponentMeta> components;
 
         static ComponentID get_next_id() {
-            static ComponentID next_id{0};
-            assert(next_id < kMaxComponentID);
+            static size_t next_id{0};
+            assert(next_id <= kMaxComponentID);
             return next_id++;
         }
     };
