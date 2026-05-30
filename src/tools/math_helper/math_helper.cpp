@@ -1,4 +1,4 @@
-#include "tools/MathHelper/MathHelper.h"
+#include "math_helper.h"
 #include <random>
 #include <godot_cpp/core/class_db.hpp>
 

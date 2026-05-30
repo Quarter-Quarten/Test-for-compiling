@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tools/Lighting/WarpGrid.h>
+#include "tools/lighting/warp_grid.h"
 
 #include <godot_cpp/classes/canvas_item_material.hpp>
 #include <godot_cpp/classes/image.hpp>

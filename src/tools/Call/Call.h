@@ -12,7 +12,7 @@
 #include <godot_cpp/variant/transform2d.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
-#include <tools/ConstsC/ConstsC.h>
+#include <tools/consts_c/consts_c.h>
 
 namespace godot {
 

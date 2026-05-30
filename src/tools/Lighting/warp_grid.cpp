@@ -1,4 +1,4 @@
-#include "tools/Lighting/WarpGrid.h"
+#include "warp_grid.h"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/math.hpp>

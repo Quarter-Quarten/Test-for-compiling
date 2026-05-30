@@ -1,11 +1,11 @@
 #include "register_types.h"
 #include "godot_cpp/core/class_db.hpp"
-#include "tools/ConstsC/ConstsC.h"
-#include "tools/Call/Call.h"
-#include "tools/MathHelper/MathHelper.h"
-#include "tools/Lighting/Lighting.h"
-#include "tools/Lighting/WarpGrid.h"
-#include "tools/DHC/DHC.h"
+#include "tools/consts_c/consts_c.h"
+#include "tools/call/call.h"
+#include "tools/math_helper/mathHelper.h"
+#include "tools/lighting/lighting.h"
+#include "tools/lighting/warp_grid.h"
+#include "tools/dh_c/dh_c.h"
 // #include "ecs/ECS.h"
 
 using namespace godot;

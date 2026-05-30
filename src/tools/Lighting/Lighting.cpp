@@ -1,7 +1,6 @@
-#include "tools/Lighting/Lighting.h"
-#include "tools/Lighting/WarpGrid.h"
+#include "lighting.h"
+#include "tools/call/call.h"
 
-#include <tools/Call/Call.h>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/window.hpp>

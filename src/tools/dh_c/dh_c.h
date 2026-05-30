@@ -6,7 +6,6 @@
 #include <godot_cpp/variant/variant.hpp>
 
 namespace godot {
-
     class DHC : public RefCounted {
         GDCLASS(DHC, RefCounted);
 
