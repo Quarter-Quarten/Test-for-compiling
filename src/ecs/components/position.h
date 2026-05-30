@@ -8,3 +8,4 @@ using namespace godot;
 struct Position {
 	Vector2 position;
 }
+REGISTER_COMPONENT(Position)

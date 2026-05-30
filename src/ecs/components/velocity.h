@@ -8,3 +8,4 @@ using namespace godot;
 struct Velocity {
 	Vector2 velocity;
 }
+REGISTER_COMPONENT(Velocity)
