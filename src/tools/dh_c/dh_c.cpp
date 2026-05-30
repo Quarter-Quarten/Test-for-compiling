@@ -1,4 +1,4 @@
-#include "dh_c.h"
+#include "tools/dh_c/dh_c.h"
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>

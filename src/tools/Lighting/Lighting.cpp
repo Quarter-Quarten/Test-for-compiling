@@ -1,4 +1,4 @@
-#include "lighting.h"
+#include "tools/lighting/lighting.h"
 #include "tools/call/call.h"
 
 #include <godot_cpp/classes/resource_loader.hpp>

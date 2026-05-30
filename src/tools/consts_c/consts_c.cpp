@@ -1,4 +1,4 @@
-#include "consts_c.h"
+#include "tools/consts_c/consts_c.h"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/math.hpp>
