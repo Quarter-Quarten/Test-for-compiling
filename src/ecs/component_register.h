@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include <cassert>
+#include <type_traits>
 
 namespace comp {
     using ComponentID = std::uint8_t;
@@ -25,14 +26,19 @@ namespace comp {
 
     class ComponentRegister {
     public:
-        template <typename T>
-        static ComponentID register_component() {
+		template <typename T>
+		static ComponentID register_component() {
+		    // 编译期检查：组件类型必须平凡可拷贝 + 标准布局
+		    static_assert(std::is_trivially_copyable_v<T>,
+                          "Component type must be trivially copyable (for memcpy)");
+            static_assert(std::is_standard_layout_v<T>,
+                          "Component type must be standard layout");
+        
             ComponentMeta meta;
             meta.id = get_next_id();
             meta.size = sizeof(T);
             meta.align = alignof(T);
             
-            // 利用无捕获 lambda 生成函数指针
             meta.constructor = [](void* ptr) { new(ptr) T(); };
             meta.destructor = [](void* ptr) { static_cast<T*>(ptr)->~T(); };
             
