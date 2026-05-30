@@ -5,6 +5,6 @@
 
 using namespace godot;
 
-struct Position {
-	Vector2 position;
+struct Velocity {
+	Vector2 velocity;
 }
