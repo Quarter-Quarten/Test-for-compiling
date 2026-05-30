@@ -2,7 +2,7 @@
 #include "godot_cpp/core/class_db.hpp"
 #include "tools/consts_c/consts_c.h"
 #include "tools/call/call.h"
-#include "tools/math_helper/mathHelper.h"
+#include "tools/math_helper/math_helper.h"
 #include "tools/lighting/lighting.h"
 #include "tools/lighting/warp_grid.h"
 #include "tools/dh_c/dh_c.h"
