@@ -24,7 +24,7 @@ struct Chunk {
     // ---------- 构造函数 ----------
     explicit Chunk() = default;
     
-    recreate(Archetype* p_type);
+    void recreate(Archetype* p_type);
 
 	Chunk(const Chunk&) = delete;
 	Chunk& operator=(const Chunk&) = delete;
@@ -91,7 +91,7 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);
         if (chunk_sets_.size()) {
         	if (Chunk* c = chunk_sets_.back()->get_next_chunk()) {
-        		return c
+        		return c;
 			}
         }
         
