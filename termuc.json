@@ -1,0 +1,7 @@
+{
+  "buildCmd": "make $o/$e -j8 O=$o",
+  "compileCmd": "make $o/$e.o -j8 O=$o",
+  "runCmd": "$x/$e",
+  "outputDir": "build",
+  "opens": []
+}

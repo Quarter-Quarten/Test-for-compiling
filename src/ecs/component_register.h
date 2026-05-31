@@ -44,6 +44,7 @@ namespace comp {
             
             components.push_back(meta);
             return meta.id;
+
         }
         
         static const ComponentMeta& get_meta(ComponentID id) {
@@ -70,3 +71,5 @@ namespace { \
         } \
     } register_helper##__COUNTER__; \
 }
+
+
