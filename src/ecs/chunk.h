@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <cassert>
-#include "src/tools/component_register.h"
+#include "ecs/component_register.h"
 
 inline constexpr size_t kChunkSize = 16384;
 
