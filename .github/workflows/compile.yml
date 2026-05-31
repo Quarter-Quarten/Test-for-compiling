@@ -53,9 +53,32 @@ jobs:
         uses: actions/cache@v4
         with:
           path: scons_cache
-          key: ${{ runner.os }}-scons-cache-${{ hashFiles('src/**', 'include/**', 'godot-cpp/**') }}
+          key: ${{ runner.os }}-scons-cache1-${{ hashFiles('src/**', 'godot-cpp/**') }}
           restore-keys: |
-            ${{ runner.os }}-scons-cache-
+            ${{ runner.os }}-scons-cache1-
+      # 删除源文件已不存在的 .o 文件
+      - name: Remove orphan object files
+        run: |
+          set -e
+          # 源文件在 src/ 和 godot-cpp/ 目录下
+          # .o 文件在 scons_cache 中通常保持相似的相对路径结构，例如：
+          #   src/main.cpp -> scons_cache/src/main.o
+          # 你需要根据实际构建配置调整下面的路径映射
+          
+          find scons_cache -name "*.o" | while read obj; do
+            # 从 .o 路径推断源文件路径（去掉 scons_cache/ 前缀，把 .o 改为 .cpp 或 .c）
+            src="${obj#scons_cache/}"          # 去掉 scons_cache/ 前缀
+            src="${src%.o}.cpp"                # 假设源文件是 .cpp，如果是 .c 则改为 .c
+            
+            # 检查源文件是否存在（在仓库根目录下）
+            if [ ! -f "$src" ] && [ ! -f "${src%.cpp}.c" ]; then
+              echo "Source deleted: $src -> removing $obj"
+              rm -f "$obj"
+            fi
+          done
+        shell: bash
+      
+      
 
       # 编译
       - name: Build .so for Android arm64
