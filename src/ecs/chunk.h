@@ -74,6 +74,7 @@ class ChunkSet {
     std::array<Chunk, kChunkSetSize> chunks;
     size_t next_id = 0;
 public:
+	ChunkSet() = default;
     Chunk* get_next_chunk() {
         if (next_id >= kChunkSetSize) return nullptr;
         return &chunks[next_id++];
@@ -86,11 +87,9 @@ class ChunkAllocator {
 public:
     Chunk* get_next_chunk() {
         std::lock_guard<std::mutex> lock(mutex_);
-        // 尝试在现有 ChunkSet 中分配
-        for (auto& cs : chunk_sets_) {
-            if (Chunk* c = cs->get_next_chunk())
-                return c;
-        }
+        if (chunk_sets_.size() && Chunk* c = chunk_sets_.back()->get_next_chunk())
+        	return c
+        
         // 没有空闲 ChunkSet，创建新的
         auto new_cs = std::make_unique<ChunkSet>();
         Chunk* c = new_cs->get_next_chunk();
