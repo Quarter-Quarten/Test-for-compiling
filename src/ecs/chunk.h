@@ -22,7 +22,9 @@ struct Chunk {
     std::array<std::uint8_t, kChunkSize - sizeof(Archetype*)> data;
 
     // ---------- 构造函数 ----------
-    explicit Chunk(Archetype* p_type);
+    explicit Chunk() = default;
+    
+    recreate(Archetype* p_type);
 
 	Chunk(const Chunk&) = delete;
 	Chunk& operator=(const Chunk&) = delete;
