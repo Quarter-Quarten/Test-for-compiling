@@ -1,4 +1,4 @@
-#include "tools/math_helper/math_helper.h"
+#include "tools/math_helper/math_helper.hpp"
 #include <random>
 #include <godot_cpp/core/class_db.hpp>
 
@@ -11,7 +11,7 @@ double MathHelper::random_sign_double() {
 }
 
 int MathHelper::random_sign() {
-    return dis(gen);
+    return dis(gen) * 2 - 1;
 }
 
 void MathHelper::_bind_methods() {

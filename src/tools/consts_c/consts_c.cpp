@@ -1,4 +1,4 @@
-#include "tools/consts_c/consts_c.h"
+#include "tools/consts_c/consts_c.hpp"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/math.hpp>
@@ -31,7 +31,7 @@ String ConstsC::get_blueprint_suffix() { return ".blp"; }
 
 int ConstsC::get_tile_set_separation() { return 0; }
 int ConstsC::get_ticks_per_second() { return 30; }
-double ConstsC::get_tick_time() { return 1.0 / 30.0; }
+real_t ConstsC::get_tick_time() { return 1.0 / 30.0; }
 
 Vector2i ConstsC::get_tile_size_i() { return Vector2i(16, 16); }
 Vector2 ConstsC::get_tile_size() { return Vector2(16, 16); }
@@ -66,15 +66,6 @@ int ConstsC::get_conversation_z() { return 600; }
 int ConstsC::get_player_team() { return 1; }
 int ConstsC::get_enemy_team() { return 2; }
 int ConstsC::get_structure_team() { return 3; }
-
-int64_t ConstsC::get_max_8b() { return int64_t(1) << 8; }
-int64_t ConstsC::get_max_7b() { return int64_t(1) << 7; }
-int64_t ConstsC::get_max_16b() { return int64_t(1) << 16; }
-int64_t ConstsC::get_max_15b() { return int64_t(1) << 15; }
-uint64_t ConstsC::get_max_32b() { return uint64_t(1) << 32; }
-int64_t ConstsC::get_max_31b() { return int64_t(1) << 31; }
-uint64_t ConstsC::get_max_64b() { return uint64_t(1) << 63; } // 64-bit shift keeps valid range
-int64_t ConstsC::get_max_63b() { return int64_t(1) << 62; }   // signed safe upper bound
 
 double ConstsC::get_sound_range() { return 640.0; }
 double ConstsC::get_shake_range_min() { return 64.0; }

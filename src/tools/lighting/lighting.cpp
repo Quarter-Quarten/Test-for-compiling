@@ -1,6 +1,7 @@
-#include "tools/lighting/lighting.h"
-#include "tools/call/call.h"
+#include "tools/lighting/lighting.hpp"
+#include "tools/lighting/warp_grid.hpp"
 
+#include <tools/call/call.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/window.hpp>
@@ -31,10 +32,6 @@ void Lighting::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_tile_light", "tile"), &Lighting::get_tile_light);
 }
 
-float Lighting::_get_lightness(const Color &p_c) {
-    return p_c.r * 0.299f + p_c.g * 0.114f + p_c.b * 0.587f;
-}
-
 bool Lighting::_rect_circle_intersects(const Rect2i &p_rect, float p_radius, const Vector2i &p_center) {
     const Vector2 center = p_rect.get_center();
     const Vector2 diff = Vector2(p_center) - center;
@@ -53,11 +50,11 @@ Vector2i Lighting::_region_to_tile(const Vector2i &p_region, const Vector2i &p_r
 
 Color Lighting::_mix_color(const Color &p_a, const Color &p_b) const {
     Color result = p_a + p_b;
-    const float denom = _get_lightness(result);
+    const float denom = Call::get_lightness(result);
     if (denom <= 0.00001f) {
         return result;
     }
-    result *= MAX(_get_lightness(p_a), _get_lightness(p_b)) / denom;
+    result *= MAX(Call::get_lightness(p_a), Call::get_lightness(p_b)) / denom;
     return result;
 }
 
@@ -66,12 +63,12 @@ void Lighting::_fetch_runtime_config() {
     if (!tree || !tree->get_root()) {
         return;
     }
-    vars_node = Object::cast_to<Object>(tree->get_root()->get_node_or_null(NodePath("/root/Vars")));
+    Node2D* const vars_node = Call::get_vars();
 
     consts_script = ResourceLoader::get_singleton()->load("res://src/global/Consts.gd");
     setting_script = ResourceLoader::get_singleton()->load("res://src/global/Setting.gd");
-    region_controler_script = ResourceLoader::get_singleton()->load("res://src/world/controllers/map/RegionControler.gd");
-    time_controler_script = ResourceLoader::get_singleton()->load("res://src/world/controllers/TimeControler.gd");
+    region_controller_script = ResourceLoader::get_singleton()->load("res://src/world/controllers/map/Regioncontroller.gd");
+    time_controller_script = ResourceLoader::get_singleton()->load("res://src/world/controllers/Timecontroller.gd");
 
     if (vars_node) {
         const Vector2i vars_draw_size = vars_node->get("draw_size");
@@ -136,6 +133,7 @@ void Lighting::_ready() {
 }
 
 void Lighting::_init_canvas_item() {
+    Node2D* const vars_node = Call::get_vars();
     if (!light_enabled || !vars_node) {
         return;
     }
@@ -185,6 +183,7 @@ void Lighting::_worker_loop() {
 }
 
 bool Lighting::_is_world_initiated() const {
+    Node2D* const vars_node = Call::get_vars();
     if (!vars_node) return false;
     Variant world = vars_node->get("world");
     Object *world_obj = Object::cast_to<Object>(world);
@@ -193,14 +192,14 @@ bool Lighting::_is_world_initiated() const {
 }
 
 Color Lighting::_get_time_color() const {
-    if (!time_controler_script.is_valid()) return Color(0, 0, 0, 1);
-    Variant v = time_controler_script->call("get_now_color");
+    if (!time_controller_script.is_valid()) return Color(0, 0, 0, 1);
+    Variant v = time_controller_script->call("get_now_color");
     return v.get_type() == Variant::COLOR ? (Color)v : Color(0, 0, 0, 1);
 }
 
 Vector2i Lighting::_get_region_first() const {
-    if (!region_controler_script.is_valid()) return Vector2i();
-    Variant first = region_controler_script->get("first");
+    if (!region_controller_script.is_valid()) return Vector2i();
+    Variant first = region_controller_script->get("first");
     Object *first_obj = Object::cast_to<Object>(first);
     if (!first_obj) return Vector2i();
     Variant v = first_obj->call("get_v");
@@ -208,6 +207,7 @@ Vector2i Lighting::_get_region_first() const {
 }
 
 void Lighting::_copy_light_lose_from_vars(Ref<WrapGridFloat32> &p_out) {
+    Node2D* const vars_node = Call::get_vars();
     if (!vars_node) return;
     p_out->init_size(load_size_tile);
     vars_node->call("duplicate_light_lose_map", p_out);
@@ -315,6 +315,7 @@ Color Lighting::get_tile_light(const Vector2i &p_tile) const {
 void Lighting::_thread_function() {
     const Vector2i first = _get_region_first();
     const Color time_color = _get_time_color();
+    Node2D* const vars_node = Call::get_vars();
     const Vector2i center_offset = vars_node ? (Vector2i(vars_node->get("load_size")) - Vector2i(vars_node->get("draw_size"))) / 2 : Vector2i();
     const Vector2i current_top_left = _region_to_tile(first + center_offset, region_size);
 
@@ -454,15 +455,18 @@ void Lighting::_spread(Ref<WrapGridColor> &p_light_map, Ref<WrapGridFloat32> &p_
         const float lose = p_light_lose_map->get_v(tile.y, tile.x);
         const float next_radius = radius - 1.0f - lose * 5.0f;
         if (next_radius <= 0.0f) continue;
+
         const float now_intensity = (next_radius / p_max_radius) * p_intensity;
         const Color add = p_color * now_intensity;
         for (const Vector2i &dir : dirs) {
             const Vector2i next = tile + dir;
             const auto hg = handled_grids.find(next);
             if (hg != handled_grids.end() && p_intensity <= hg->second) continue;
+
             handled_grids[next] = now_intensity;
             const Color base = p_light_map->get_v(next.y, next.x);
-            if (Math::is_equal_approx(base.get_h(), color_h) && _get_lightness(base) >= now_intensity) continue;
+            if (Math::is_equal_approx(base.get_h(), color_h) && Call::get_lightness(base) >= now_intensity) continue;
+
             now_grids2[next] = next_radius;
             p_light_map->set_v(next.y, next.x, _mix_color(base, add));
         }
