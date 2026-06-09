@@ -1,6 +1,5 @@
-import os
-
-for root, dirs, files in os.walk('.'):
-    for file in files:
-        if file.endswith('.o'):
-            os.remove(os.path.join(root, file))
+from pathlib import Path
+for f in Path('.').rglob('*.o'):
+    f.unlink()
+for f in Path('.').rglob('*.os'):
+    f.unlink()
