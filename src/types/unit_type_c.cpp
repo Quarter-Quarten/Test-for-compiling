@@ -1,6 +1,6 @@
-#include "UnitTypeC.hpp"
+#include "unit_type_c.hpp"
 
-#include "tools/call/Call.hpp"
+#include "tools/call/call.hpp"
 #include "tools/consts_c/consts_c.hpp"
 
 #include <godot_cpp/core/math.hpp>

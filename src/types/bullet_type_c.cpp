@@ -1,5 +1,5 @@
-#include "BulletTypeC.hpp"
-#include "tools/call/Call.hpp"
+#include "bullet_type_c.hpp"
+#include "tools/call/call.hpp"
 #include <godot_cpp/variant/utility_functions.hpp>
 
 BulletTypeC::BulletTypeC() {

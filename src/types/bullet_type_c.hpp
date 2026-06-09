@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TypeC.hpp"
+#include "type_c.hpp"
 
 #include <cmath>
 

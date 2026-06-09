@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TypeC.hpp"
+#include "type_c.hpp"
 
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/callable.hpp>

@@ -1,7 +1,7 @@
 #pragma once
 #include "ecs/components.hpp"
-#include "types/BulletTypeC.hpp"
-#include "types/UnitTypeC.hpp"
+#include "types/bullet_type_c.hpp"
+#include "types/unit_type_c.hpp"
 #include <ecs/lib/flecs.h>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/mutex.hpp>
@@ -14,7 +14,7 @@ namespace ecs {
         GDCLASS(ECSWorld, Node);
     public:
         ECSWorld();
-        ~ECSWorld() = default;
+        ~ECSWorld();
 
     void init(
         QuadTreeManagerC* quad_tree, MyMultiMeshC* bullet_drawer,
@@ -23,6 +23,7 @@ namespace ecs {
     );
 
     void _ready() override;
+    void _exit_tree() override;
     void update(double delta);
 
     int get_last_process_duration() const;
@@ -58,5 +59,6 @@ namespace ecs {
     private:
         flecs::world world;
         int last_process_duration_;
+        RID trail_canvas_rid_;
     };
 }

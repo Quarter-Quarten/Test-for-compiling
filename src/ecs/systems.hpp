@@ -1,13 +1,14 @@
 #pragma once
 
 #include "tools/consts_c/consts_c.hpp"
-#include "tools/call/Call.hpp"
+#include "tools/call/call.hpp"
 #include "ecs/lib/flecs.h"
 #include "ecs/components.hpp"
 
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/classes/sprite2d.hpp>
+#include <godot_cpp/classes/rendering_server.hpp>
 #include <godot_cpp/core/object.hpp>
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -514,10 +515,122 @@ namespace ecs {
 
 
         // 拖尾系统
-        world.system<Trail, const Color*, const ColorSet*>("Trail")
+        // 每帧更新最新点
+        world.system<const Position, Trail>("TrailUpdateLatest")
             .kind(flecs::OnUpdate)
-            .each([&world](Trail& t, const Color* c, const ColorSet* cs) {
-                
+            .each([](flecs::entity e, const Position& p, Trail& t) {
+                if (t.now_len > 0) {
+                    int latest = (t.next_point - 1 + t.max_len) % t.max_len;
+                    t.points[latest] = p.value;
+                }
             });
+
+        // 每 3 tick 新增一个轨迹点
+        world.system<const Position, Trail>("TrailTickUpdate")
+            .kind(flecs::OnUpdate)
+            .interval(static_cast<real_t>(ConstsC::get_tick_time() * 3.0f))
+            .each([](flecs::entity e, const Position& p, Trail& t) {
+                t.points[t.next_point] = p.value;
+                t.next_point = (t.next_point + 1) % t.max_len;
+                t.now_len = Math::min(t.now_len + 1, t.max_len);
+            });
+
+        // 拖尾绘制
+        auto draw_trail = [](RID rid, const Trail& t) {
+            if (t.now_len < 2 || t.max_width <= Trail::EPS) return;
+
+            int n = t.now_len;
+            std::vector<Vector2> center_points(n);
+            for (int i = 0; i < n; ++i) {
+                int idx = (t.next_point - 1 - i + t.max_len) % t.max_len;
+                center_points[i] = t.points[idx];
+            }
+
+            std::vector<Vector2> clean;
+            clean.reserve(n);
+            for (const auto& p : center_points) {
+                if (clean.empty() || clean.back().distance_squared_to(p) > Trail::EPS) {
+                    clean.push_back(p);
+                }
+            }
+            if (clean.size() < 2) return;
+
+            std::vector<Vector2> filtered;
+            filtered.reserve(clean.size());
+            for (const auto& p : clean) {
+                if (p.distance_squared_to(Vector2()) > Trail::EPS) {
+                    filtered.push_back(p);
+                }
+            }
+            if (filtered.size() < 2) return;
+
+            n = static_cast<int>(filtered.size());
+            float denom = Math::max(n - 1, 1);
+
+            PackedVector2Array verts;
+            PackedColorArray cols;
+            verts.resize(n * 2);
+            cols.resize(n * 2);
+            Vector2* verts_w = verts.ptrw();
+            Color* cols_w = cols.ptrw();
+
+            for (int i = 0; i < n; ++i) {
+                const Vector2& p = filtered[i];
+
+                Vector2 prev = (i > 0) ? filtered[i - 1] : (p + (p - filtered[i + 1]));
+                Vector2 next = (i < n - 1) ? filtered[i + 1] : (p + (p - filtered[i - 1]));
+                Vector2 tangent = (next - prev).normalized();
+
+                if (tangent.length_squared() <= Trail::EPS) {
+                    if (i < n - 1) tangent = (filtered[i + 1] - p).normalized();
+                    else if (i > 0) tangent = (p - filtered[i - 1]).normalized();
+                    else tangent = Vector2(1.0f, 0.0f);
+                }
+
+                Vector2 normal(-tangent.y, tangent.x);
+                float width = t.max_width * (1.0f - static_cast<float>(i) / denom);
+
+                Color color = t.front_color;
+                if (t.gradient()) {
+                    color = t.front_color.lerp(t.back_color, static_cast<float>(i) / denom);
+                }
+
+                verts_w[i * 2] = p + normal * width;
+                verts_w[i * 2 + 1] = p - normal * width;
+                cols_w[i * 2] = color;
+                cols_w[i * 2 + 1] = color;
+            }
+
+            int tri_count = n - 1;
+            PackedInt32Array indices;
+            indices.resize(tri_count * 6);
+            int* idx_w = indices.ptrw();
+            int idx = 0;
+            for (int i = 0; i < n - 1; ++i) {
+                int a = i * 2, b = i * 2 + 1, c = (i + 1) * 2, d = (i + 1) * 2 + 1;
+                idx_w[idx++] = a; idx_w[idx++] = b; idx_w[idx++] = c;
+                idx_w[idx++] = b; idx_w[idx++] = c; idx_w[idx++] = d;
+            }
+
+            RenderingServer::get_singleton()->canvas_item_add_triangle_array(rid, indices, verts, cols);
+        };
+
+        world.system<const Trail>("TrailDraw")
+            .kind(flecs::OnStore)
+            .multi_threaded(false)
+            .run([&world, &draw_trail](flecs::iter& it) {
+                const TrailDrawer& td = world.get<TrailDrawer>();
+                if (!td.canvas_rid.is_valid()) return;
+
+                RenderingServer::get_singleton()->canvas_item_clear(td.canvas_rid);
+
+                while (it.next()) {
+                    auto trails = it.field<const Trail>(0);
+                    for (int i = 0; i < it.count(); ++i) {
+                        draw_trail(td.canvas_rid, trails[i]);
+                    }
+                }
+            });
+
     }
 } // namespace ecs

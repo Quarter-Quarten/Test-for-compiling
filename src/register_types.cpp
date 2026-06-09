@@ -13,9 +13,9 @@
 #include "tools/syncable/syncable.hpp"
 #include "tools/quad_tree_manager/quad_tree_manager.hpp"
 #include "tools/predict/predict.hpp"
-#include "types/TypeC.hpp"
-#include "types/BulletTypeC.hpp"
-#include "types/UnitTypeC.hpp"
+#include "types/type_c.hpp"
+#include "types/bullet_type_c.hpp"
+#include "types/unit_type_c.hpp"
 #include "ecs/tools/id_pool.hpp"
 
 using namespace godot;

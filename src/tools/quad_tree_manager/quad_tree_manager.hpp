@@ -12,7 +12,7 @@
 #include <godot_cpp/variant/rid.hpp>
 #include <godot_cpp/classes/rendering_server.hpp>
 #include <tools/syncable/syncable.hpp>
-#include <tools/call/Call.hpp>
+#include <tools/call/call.hpp>
 #include <tools/consts_c/consts_c.hpp>
 
 using namespace godot;

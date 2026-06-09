@@ -3,10 +3,11 @@
 #include "tools/my_multi_mesh_c/my_multi_mesh_c.hpp"
 #include "tools/quad_tree_manager/quad_tree_manager.hpp"
 #include "ecs/tools/id_pool.hpp"
-#include "types/BulletTypeC.hpp"
-#include "types/UnitTypeC.hpp"
+#include "types/bullet_type_c.hpp"
+#include "types/unit_type_c.hpp"
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/color.hpp>
+#include <array>
 #include <vector>
 
 using namespace godot;
@@ -58,9 +59,22 @@ namespace ecs {
 
     // 拖尾
     struct Trail {
-        std::vector<Vector2> points;
-        std::vector<Vector2> vertexes;
+        static constexpr float EPS = 0.0001f;
+        static constexpr int MAX_POINTS = 64;
+
+        std::array<Vector2, MAX_POINTS> points{};
+        int max_len = 2;
+        int now_len = 0;
+        int next_point = 0;
+        float max_width = 0.0f;
+        Color front_color = Color(1, 1, 1);
+        Color back_color = Color(1, 1, 1);
+
+        bool gradient() const {
+            return front_color != back_color;
+        }
     };
+    struct TrailDrawer { RID canvas_rid; };
 
 
     // ==================================================== 子弹 ====================================================
@@ -262,6 +276,7 @@ namespace ecs {
         world.component<EffectRectDrawer>();
         world.component<EffectTriangleDrawer>();
         world.component<PointLightDrawer>();
+        world.component<TrailDrawer>();
 
         // 粒子
         world.component<ParticleInfo>()

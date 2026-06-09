@@ -1,4 +1,4 @@
-#include "TypeC.hpp"
+#include "type_c.hpp"
 
 TypeC::TypeC() {
 }

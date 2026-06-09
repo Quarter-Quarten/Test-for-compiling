@@ -1,8 +1,9 @@
 #include "ecs/ecs_world.hpp"
 #include "ecs/systems.hpp"
-#include "tools/call/Call.hpp"
+#include "tools/call/call.hpp"
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/time.hpp>
+#include <godot_cpp/classes/rendering_server.hpp>
 #include <godot_cpp/core/math.hpp>
 #include <cstdlib>
 #include <cassert>
@@ -11,7 +12,19 @@ using namespace godot;
 
 namespace ecs {
     ECSWorld::ECSWorld() {
-        
+    }
+
+    ECSWorld::~ECSWorld() {
+        if (trail_canvas_rid_.is_valid()) {
+            RenderingServer::get_singleton()->free_rid(trail_canvas_rid_);
+        }
+    }
+
+    void ECSWorld::_exit_tree() {
+        if (trail_canvas_rid_.is_valid()) {
+            RenderingServer::get_singleton()->free_rid(trail_canvas_rid_);
+            trail_canvas_rid_ = RID();
+        }
     }
 
     void ECSWorld::init(
@@ -34,6 +47,14 @@ namespace ecs {
             return;
         register_components(world);
         register_systems(world, this);
+
+        trail_canvas_rid_ = RenderingServer::get_singleton()->canvas_item_create();
+        Node2D* vars_node = Call::get_vars();
+        if (vars_node) {
+            RenderingServer::get_singleton()->canvas_item_set_parent(trail_canvas_rid_, vars_node->get_canvas_item());
+            RenderingServer::get_singleton()->canvas_item_set_z_index(trail_canvas_rid_, ConstsC::get_bullet_z());
+        }
+        world.set<TrailDrawer>({ trail_canvas_rid_ });
     }
 
     void ECSWorld::update(double delta) {
@@ -98,6 +119,19 @@ namespace ecs {
 
         if (bullet_type->get_scale_from() != Vector2(1, 1) || bullet_type->get_scale_to() != Vector2(1, 1)) {
             e.set<ScaleVector>({bullet_type->get_scale_from()});
+        }
+
+        if (bullet_type->has_trail()) {
+            Trail t;
+            t.max_len = Math::min(static_cast<int>(bullet_type->get_trail_len()), Trail::MAX_POINTS);
+            t.max_len = Math::max(t.max_len, 2);
+            t.max_width = static_cast<float>(bullet_type->get_trail_width());
+            t.front_color = bullet_type->get_trail_color_front();
+            t.back_color = bullet_type->get_trail_color_back();
+            t.points[0] = position;
+            t.now_len = 1;
+            t.next_point = 1;
+            e.set<Trail>(std::move(t));
         }
 
         BulletTypeComp btc;
