@@ -48,12 +48,12 @@ jobs:
         run: |
           mkdir -p scons_cache
           echo "SCONS_CACHE=scons_cache" >> $GITHUB_ENV
-      # 缓存 SCons 编译中间文件（.o 等）只编译godot-cpp 因为src代码常删导致缓存出问题
+      # 缓存 SCons 编译中间文件（.o 等）
       - name: Cache SCons build files
         uses: actions/cache@v4
         with:
           path: scons_cache
-          key: ${{ runner.os }}-scons-cache1-${{ hashFiles('godot-cpp/**') }}
+          key: ${{ runner.os }}-scons-cache1-${{ hashFiles('godot-cpp/**'), hashFiles('src/**')}}
           restore-keys: |
             ${{ runner.os }}-scons-cache1-
       
