@@ -77,31 +77,37 @@ namespace ecs {
         assert(bullet_type.is_valid());
 
         flecs::entity e = world.entity();
-        e.set<Position, LastPosition, Velocity, Rotation, BulletOrigin,
-              Lifetime,
-              ColorComp, Team,
-              SizeValue,
-              BulletDamage,
-              BulletCollision
-        >(
-            {position}, {position}, {velocity}, {velocity.angle()}, {position},
-            {static_cast<float>(bullet_type->get_lifetime()), 0.0f},
-            {bullet_type->get_color()}, {team},
-            {static_cast<float>(bullet_type->get_size())},
-            {
-                 static_cast<float>(bullet_type->get_damage()),
-                 damage_multi,
-                 static_cast<float>(bullet_type->get_cutting_damage()),
-                 static_cast<float>(bullet_type->get_armor_pierce())
-            },
-            {
-                 bullet_type->get_collide_unit(),
-                 bullet_type->get_collide_block(),
-                 static_cast<int>(bullet_type->get_pierce_cap()),
-                 {}
-            }
-        )
-        
+        e.insert([&](Position& pos, LastPosition& lastPos, Velocity& vel, 
+                     Rotation& rot, BulletOrigin& origin,
+                     Lifetime& lifetime, ColorComp& color, Team& team,
+                     SizeValue& size, BulletDamage& damage, BulletCollision& collision) { 
+            pos = position;
+            lastPos = position;
+            vel = velocity;
+            rot = velocity.angle();
+            origin = position;
+            
+            lifetime = {static_cast<float>(bullet_type->get_lifetime()), 0.0f};
+            color = {bullet_type->get_color()};
+            team = {team};  // 注意：如果参数名和类型同名，需要区分
+            
+            size = {static_cast<float>(bullet_type->get_size())};
+            
+            damage = {
+                static_cast<float>(bullet_type->get_damage()),
+                damage_multi,
+                static_cast<float>(bullet_type->get_cutting_damage()),
+                static_cast<float>(bullet_type->get_armor_pierce())
+            };
+            
+            collision = {
+                bullet_type->get_collide_unit(),
+                bullet_type->get_collide_block(),
+                static_cast<int>(bullet_type->get_pierce_cap()),
+                {}
+            };
+        });
+
         float spin = static_cast<float>(bullet_type->get_spin());
         if (spin) e.set<RotateSpeed>({spin});
 
