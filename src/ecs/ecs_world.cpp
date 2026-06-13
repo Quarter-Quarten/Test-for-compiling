@@ -178,7 +178,7 @@ namespace ecs {
                      SizeValue& size) { 
             pos = {position};
             last_pos = {position};
-            vel = {velocity};
+            vel = {};
             rot = {rotation};
             
             color = {};
