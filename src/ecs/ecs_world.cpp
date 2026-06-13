@@ -179,9 +179,9 @@ namespace ecs {
             pos = {position};
             last_pos = {position};
             vel = {velocity};
-            rot = {velocity.angle()};
+            rot = {rotation};
             
-            color = {unit_type->get_color()};
+            color = {};
             team_c = {team};
             
             size = {static_cast<float>(unit_type->get_size())};
