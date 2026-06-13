@@ -126,9 +126,10 @@ namespace ecs {
                     bullet_type->get_despawn_effect().call("at", p.value, r.value);
 
                     // 震动
-                    if (bt.shake > 0.0f && world_node) {
+                    const float shake = static_cast<float>(bt.bullet_type->get_shake());
+                    if (shake > 0.0f && world_node) {
                         Object* camera = Object::cast_to<Object>(world_node->get("camera"));
-                        if (camera) camera->call("shake_from", bt.shake, p.value);
+                        if (camera) camera->call("shake_from", shake, p.value);
                     }
 
                     // 声音
@@ -151,9 +152,10 @@ namespace ecs {
                     }
 
 
-                    float sr = static_cast<float>(bt.bullet_type->get_splash_range());
-                    float sd = static_cast<float>(bt.bullet_type->get_splash_damage());
-                    float sk = static_cast<float>(bt.bullet_type->get_splash_knockback());
+                    const float sr = static_cast<float>(bt.bullet_type->get_splash_range());
+                    const float sd = static_cast<float>(bt.bullet_type->get_splash_damage());
+                    const float sk = static_cast<float>(bt.bullet_type->get_splash_knockback());
+                    const float crit_chance = static_cast<float>(bt.bullet_type->get_crit_chance());
                     
                     // 单位溅射
                     const QuadTreeComp& qt = world.get<QuadTreeComp>();
@@ -164,11 +166,11 @@ namespace ecs {
 
                             float dist = Vector2(unit_obj->get("global_position")).distance_to(p.value);
                             float d = sd * ((4.0f + sr - dist) / sr);
-                            bool crit = bt.crit_chance > 0.0f &&
-                                static_cast<float>(std::rand()) / RAND_MAX <= bt.crit_chance;
+                            bool crit = crit_chance > 0.0f &&
+                                static_cast<float>(std::rand()) / RAND_MAX <= crit_chance;
                             if (crit) {
                                 static constexpr float CRIT_DMG_MULTI = 4.0f;
-                                d = (CRIT_DMG_MULTI * (std::max(bt.crit_chance - 1.0f, 0.0f) + 1.0f)) * d;
+                                d = (CRIT_DMG_MULTI * (std::max(crit_chance - 1.0f, 0.0f) + 1.0f)) * d;
                             }
 
                             if (bt.knockback > 0.0f && unit_obj->has_method("knockback")) {
@@ -203,11 +205,11 @@ namespace ecs {
                             float dist = (Vector2(block->get("pos")) * ConstsC::get_tile_size() +
                                 ConstsC::get_half_tile_size()).distance_to(p.value);
                             float d = sd * ((4.0f + sr - dist) / sr);
-                            bool crit = bt.crit_chance > 0.0f &&
-                                static_cast<float>(std::rand()) / RAND_MAX <= bt.crit_chance;
+                            bool crit = crit_chance > 0.0f &&
+                                static_cast<float>(std::rand()) / RAND_MAX <= crit_chance;
                             if (crit) {
                                 static constexpr float CRIT_DMG_MULTI = 4.0f;
-                                d = (CRIT_DMG_MULTI * (std::max(bt.crit_chance - 1.0f, 0.0f) + 1.0f)) * d;
+                                d = (CRIT_DMG_MULTI * (std::max(crit_chance - 1.0f, 0.0f) + 1.0f)) * d;
                             }
                             d *= bd.damage_multi;
                             block->call("damaged", d, Variant(), bd.armor_pierce, crit);
@@ -219,6 +221,8 @@ namespace ecs {
 
             // 辅助：子弹击中单位
             static auto _bullet_hit_unit = [](Object* unit_obj, const BulletTypeComp& bt, const Velocity& v, BulletCollision& bc, const BulletDamage& bd) {
+            	const float crit_chance = static_cast<float>(bt.bullet_type->get_crit_chance());
+            	
                 // 重复碰撞检测
                 int64_t id = unit_obj->get_instance_id();
                 if (bc.collided.has(id)) return false;
@@ -229,11 +233,11 @@ namespace ecs {
                 float d = (bd.damage + (vel_len / base_speed) * bd.cutting_damage) * bd.damage_multi;
 
                 // 暴击判定与计算
-                bool is_crit = bt.crit_chance > 0.0f &&
-                    static_cast<float>(std::rand()) / RAND_MAX <= bt.crit_chance;
+                bool is_crit = crit_chance > 0.0f &&
+                    static_cast<float>(std::rand()) / RAND_MAX <= crit_chance;
                 if (is_crit) {
                     static constexpr float CRIT_DMG_MULTI = 4.0f;
-                    d = (CRIT_DMG_MULTI * (std::max(bt.crit_chance - 1.0f, 0.0f) + 1.0f)) * d;
+                    d = (CRIT_DMG_MULTI * (std::max(crit_chance - 1.0f, 0.0f) + 1.0f)) * d;
                 }
 
                 // 击退
