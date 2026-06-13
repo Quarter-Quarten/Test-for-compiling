@@ -80,7 +80,6 @@ namespace ecs {
             return front_color != back_color;
         }
     };
-    struct TrailDrawer { RID canvas_rid; };
 
 
     // ==================================================== 子弹 ====================================================
@@ -146,6 +145,7 @@ namespace ecs {
     };
     
 
+    struct Unit {};
     struct Enemy {};
     struct NPC {};
     struct Summoned {};
@@ -158,6 +158,9 @@ namespace ecs {
     struct EffectRectDrawer { MyMultiMeshC* ptr; };
     struct EffectTriangleDrawer { MyMultiMeshC* ptr; };
     struct PointLightDrawer { MyMultiMeshC* ptr; };
+    
+    struct TrailDrawer { RID canvas_rid; };
+    struct UnitDrawer { RID canvas_rid; };
 
     // ==================================================== 粒子 ====================================================
     struct ParticleInfo {
@@ -248,6 +251,7 @@ namespace ecs {
         // 单位
         world.component<UnitTypeComp>();
         
+        world.component<Unit>();
         world.component<Enemy>();
         world.component<NPC>();
         world.component<Summoned>();

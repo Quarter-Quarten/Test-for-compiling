@@ -22,10 +22,6 @@ namespace ecs {
     }
 
     void ECSWorld::_exit_tree() {
-        if (trail_canvas_rid_.is_valid()) {
-            RenderingServer::get_singleton()->free_rid(trail_canvas_rid_);
-            trail_canvas_rid_ = RID();
-        }
     }
 
     void ECSWorld::init(
@@ -50,12 +46,17 @@ namespace ecs {
         register_systems(world, this);
 
         trail_canvas_rid_ = RenderingServer::get_singleton()->canvas_item_create();
+        unit_canvas_rid_ = RenderingServer::get_singleton()->canvas_item_create();
         Node2D* vars_node = Call::get_vars();
         if (vars_node) {
             RenderingServer::get_singleton()->canvas_item_set_parent(trail_canvas_rid_, vars_node->get_canvas_item());
             RenderingServer::get_singleton()->canvas_item_set_z_index(trail_canvas_rid_, ConstsC::get_bullet_z());
+            
+            RenderingServer::get_singleton()->canvas_item_set_parent(unit_canvas_rid_, vars_node->get_canvas_item());
+            RenderingServer::get_singleton()->canvas_item_set_z_index(unit_canvas_rid_, ConstsC::get_unit_z());
         }
         world.set<TrailDrawer>({ trail_canvas_rid_ });
+        world.set<UnitDrawer>({ unit_canvas_rid_ });
     }
 
     void ECSWorld::update(double delta) {
@@ -173,7 +174,7 @@ namespace ecs {
         assert(unit_type.is_valid());
         flecs::entity e = world.entity();
         e.insert([&](Position& pos, LastPosition& last_pos, Velocity& vel, 
-                     Rotation& rot,
+                     Rotation& rot, Unit& unit_sign,
                      ColorComp& color, Team& team_c,
                      SizeValue& size) { 
             pos = {position};
@@ -183,6 +184,8 @@ namespace ecs {
             
             color = {};
             team_c = {team};
+            
+            unit_sign = {};
             
             size = {static_cast<float>(unit_type->get_size())};
         });

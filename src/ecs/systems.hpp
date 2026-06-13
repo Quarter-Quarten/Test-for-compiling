@@ -637,6 +637,25 @@ namespace ecs {
                     }
                 }
             });
+        
+        world.system<const Unit>("UnitDraw")
+            .kind(flecs::OnStore)
+            .multi_threaded(false)
+            .run([&world](flecs::iter& it) {
+                const UnitDrawer& ud = world.get<UnitDrawer>();
+                if (!ud.canvas_rid.is_valid()) return;
+
+                RenderingServer::get_singleton()->canvas_item_clear(td.canvas_rid);
+
+                while (it.next()) {
+                    auto unit = it.field<const Unit>(0);
+                    for (int i = 0; i < it.count(); ++i) {
+                    	const UnitTypeComp& utc = unit[i].get<const UnitTypeComp>();
+                    	const Position& p = unit[i].get<const Position>();
+                        utc.unit_type.call_deferred("_draw", 0.0, p.value, 2.0, Color(1, 1, 1, 1), ud.canvas_rid)
+                    }
+                }
+            });
 
     }
 } // namespace ecs
