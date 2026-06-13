@@ -53,7 +53,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: scons_cache
-          key: ${{ runner.os }}-scons-cache1-${{ hashFiles('godot-cpp/**'), hashFiles('src/**')}}
+          key: ${{ runner.os }}-scons-cache1-${{ hashFiles('godot-cpp/**', 'src/**') }}
           restore-keys: |
             ${{ runner.os }}-scons-cache1-
       
