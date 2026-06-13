@@ -81,11 +81,11 @@ namespace ecs {
                      Rotation& rot, BulletOrigin& origin,
                      Lifetime& lifetime, ColorComp& color, Team& team_c,
                      SizeValue& size, BulletDamage& damage, BulletCollision& collision) { 
-            pos = {position};
-            lastPos = {position{};
-            vel = {velocity};
-            rot = {velocity.angle()};
-            origin = {position};
+            pos = position;
+            lastPos = position;
+            vel = velocity;
+            rot = velocity.angle();
+            origin = position;
             
             lifetime = {static_cast<float>(bullet_type->get_lifetime()), 0.0f};
             color = {bullet_type->get_color()};
