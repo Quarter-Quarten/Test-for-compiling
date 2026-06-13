@@ -79,17 +79,17 @@ namespace ecs {
         flecs::entity e = world.entity();
         e.insert([&](Position& pos, LastPosition& lastPos, Velocity& vel, 
                      Rotation& rot, BulletOrigin& origin,
-                     Lifetime& lifetime, ColorComp& color, Team& team,
+                     Lifetime& lifetime, ColorComp& color, Team& team_c,
                      SizeValue& size, BulletDamage& damage, BulletCollision& collision) { 
-            pos = position;
-            lastPos = position;
-            vel = velocity;
-            rot = velocity.angle();
-            origin = position;
+            pos = {position};
+            lastPos = {position{};
+            vel = {velocity};
+            rot = {velocity.angle()};
+            origin = {position};
             
             lifetime = {static_cast<float>(bullet_type->get_lifetime()), 0.0f};
             color = {bullet_type->get_color()};
-            team = {team};  // 注意：如果参数名和类型同名，需要区分
+            team_c = {team};
             
             size = {static_cast<float>(bullet_type->get_size())};
             
