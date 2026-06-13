@@ -329,7 +329,7 @@ namespace ecs {
                             int64_t id = block->get_instance_id();
                             if (!bc.collided.has(id)) {
                                 bc.collided.push_back(id);
-                                block->call("damaged", hit_damage * static_cast<float>(bt.bullet_type->get_block_damage_multi());,
+                                block->call("damaged", hit_damage * static_cast<float>(bt.bullet_type->get_block_damage_multi()));,
                                     Variant(), bd.armor_pierce);
                                 hit_block = true;
                                 (bc.pierce_remaining)--;
@@ -338,7 +338,7 @@ namespace ecs {
                     }
 
                     // hit_once：首次碰撞检测后禁用后续帧
-                    if (bt.hit_once) {
+                    if (bt.bullet_type->get_hit_once()) {
                         bc.collide = false;
                     }
 
