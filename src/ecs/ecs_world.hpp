@@ -27,6 +27,11 @@ namespace ecs {
     void update(double delta);
 
     int get_last_process_duration() const;
+    
+    IDPool<int>& get_particle_ids() {
+    	return particle_ids_;
+    };
+    
 
     void create_bullet(
         const Vector2& position, const Vector2& velocity,
