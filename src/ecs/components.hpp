@@ -145,7 +145,6 @@ namespace ecs {
     };
     
 
-    struct Unit {};
     struct Enemy {};
     struct NPC {};
     struct Summoned {};
@@ -251,7 +250,6 @@ namespace ecs {
         // 单位
         world.component<UnitTypeComp>();
         
-        world.component<Unit>();
         world.component<Enemy>();
         world.component<NPC>();
         world.component<Summoned>();

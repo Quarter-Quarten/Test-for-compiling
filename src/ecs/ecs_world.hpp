@@ -59,6 +59,8 @@ namespace ecs {
     private:
         flecs::world world;
         int last_process_duration_;
+        
         RID trail_canvas_rid_;
+        RID unit_canvas_rid_;
     };
 }

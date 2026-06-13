@@ -174,7 +174,7 @@ namespace ecs {
         assert(unit_type.is_valid());
         flecs::entity e = world.entity();
         e.insert([&](Position& pos, LastPosition& last_pos, Velocity& vel, 
-                     Rotation& rot, Unit& unit_sign,
+                     Rotation& rot, UnitTypeComp& utc,
                      ColorComp& color, Team& team_c,
                      SizeValue& size) { 
             pos = {position};
@@ -185,14 +185,10 @@ namespace ecs {
             color = {};
             team_c = {team};
             
-            unit_sign = {};
+            utc = {unit_type.ptr()};
             
             size = {static_cast<float>(unit_type->get_size())};
         });
-
-        UnitTypeComp utc;
-        utc.unit_type  = unit_type.ptr();
-        e.set<UnitTypeComp>(utc);
 
         switch (unit_type->get_unit_kind())
         {

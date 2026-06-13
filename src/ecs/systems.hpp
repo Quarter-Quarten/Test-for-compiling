@@ -375,7 +375,7 @@ namespace ecs {
                     bullet_drawer.ptr->add_now();
                 });
             world.system<>("BulletDrawSubmit")
-                .kind(flecs::OnStore)
+                .kind(flecs::OnUpdate)
                 .multi_threaded(false)
                 .each([&world]() {
                     const BulletDrawer& bullet_drawer = world.get<BulletDrawer>();
@@ -507,9 +507,9 @@ namespace ecs {
                     }
                 });
 
-            // 粒子绘制提交（OnStore阶段）
+            // 粒子绘制提交
             world.system<>("EffectDrawSubmit")
-                .kind(flecs::OnStore)
+                .kind(flecs::OnUpdate)
                 .multi_threaded(false)
                 .each([&world]() {
                     world.get<EffectCircleDrawer>().ptr->update();
@@ -622,7 +622,7 @@ namespace ecs {
         };
 
         world.system<const Trail>("TrailDraw")
-            .kind(flecs::OnStore)
+            .kind(flecs::OnUpdate)
             .multi_threaded(false)
             .run([&world, &draw_trail](flecs::iter& it) {
                 const TrailDrawer& td = world.get<TrailDrawer>();
@@ -638,21 +638,26 @@ namespace ecs {
                 }
             });
         
-        world.system<const Unit>("UnitDraw")
-            .kind(flecs::OnStore)
+        world.system<const UnitTypeComp>("UnitDraw")
+            .kind(flecs::OnUpdate)
             .multi_threaded(false)
-            .run([&world](flecs::iter& it) {
-                const UnitDrawer& ud = world.get<UnitDrawer>();
-                if (!ud.canvas_rid.is_valid()) return;
-
-                RenderingServer::get_singleton()->canvas_item_clear(td.canvas_rid);
-
+            .iter([&world](flecs::iter& it) {
+                const UnitDrawer* ud = world.get<UnitDrawer>();
+                if (!ud || !ud->canvas_rid.is_valid()) return;
+        
+                RenderingServer::get_singleton()->canvas_item_clear(ud->canvas_rid);
+        
                 while (it.next()) {
-                    auto unit = it.field<const Unit>(0);
+                    auto units = it.field<const UnitTypeComp>(0);
+                    auto positions = it.field<const Position>(1);
+                    auto rotations = it.field<const Rotation>(2);
+        
                     for (int i = 0; i < it.count(); ++i) {
-                    	const UnitTypeComp& utc = unit[i].get<const UnitTypeComp>();
-                    	const Position& p = unit[i].get<const Position>();
-                        utc.unit_type.call_deferred("_draw", 0.0, p.value, 2.0, Color(1, 1, 1, 1), ud.canvas_rid)
+                        const UnitTypeComp& utc = units[i];
+                        const Position& p = positions[i];
+                        const Rotation& r = rotations[i];
+                        utc.unit_type->call_deferred("_draw", r.value, p.value, 2.0,
+                                                     Color(1, 1, 1, 1), ud->canvas_rid);
                     }
                 }
             });
