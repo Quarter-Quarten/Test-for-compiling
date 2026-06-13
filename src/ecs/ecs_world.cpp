@@ -77,29 +77,31 @@ namespace ecs {
         assert(bullet_type.is_valid());
 
         flecs::entity e = world.entity();
-        e.set<Position>({position})
-         .set<LastPosition>({position})
-         .set<Velocity>({velocity})
-         .set<Rotation>({velocity.angle()})
-         .set<Lifetime>({static_cast<float>(bullet_type->get_lifetime()), 0.0f})
-         .set<ColorComp>({bullet_type->get_color()})
-         .set<Team>({team})
-         .set<SizeValue>({static_cast<float>(bullet_type->get_size())})
-         .set<BulletOrigin>({position})
-         .set<BulletDamage>({
-             static_cast<float>(bullet_type->get_damage()),
-             damage_multi,
-             static_cast<float>(bullet_type->get_cutting_damage()),
-             static_cast<float>(bullet_type->get_armor_pierce())
-         })
-         .set<BulletCollision>({
-             bullet_type->get_collide_unit(),
-             bullet_type->get_collide_block(),
-             static_cast<int>(bullet_type->get_pierce_cap()),
-             {}
-         });
-        // .set<GDBulletRef>({gd_bullet_index, static_cast<int>(bullet_type->get_index())});
-
+        e.set<Position, LastPosition, Velocity, Rotation, BulletOrigin,
+              Lifetime,
+              ColorComp, Team,
+              SizeValue,
+              BulletDamage,
+              BulletCollision
+        >(
+            {position}, {position}, {velocity}, {velocity.angle()}, {position},
+            {static_cast<float>(bullet_type->get_lifetime()), 0.0f},
+            {bullet_type->get_color()}, {team},
+            {static_cast<float>(bullet_type->get_size())},
+            {
+                 static_cast<float>(bullet_type->get_damage()),
+                 damage_multi,
+                 static_cast<float>(bullet_type->get_cutting_damage()),
+                 static_cast<float>(bullet_type->get_armor_pierce())
+            },
+            {
+                 bullet_type->get_collide_unit(),
+                 bullet_type->get_collide_block(),
+                 static_cast<int>(bullet_type->get_pierce_cap()),
+                 {}
+            }
+        )
+        
         float spin = static_cast<float>(bullet_type->get_spin());
         if (spin) e.set<RotateSpeed>({spin});
 
@@ -149,9 +151,6 @@ namespace ecs {
         btc.speed        = static_cast<float>(bullet_type->get_speed());
         btc.knockback    = static_cast<float>(bullet_type->get_knockback());
         btc.crit_chance  = static_cast<float>(bullet_type->get_crit_chance());
-        btc.splash_range = static_cast<float>(bullet_type->get_splash_range());
-        btc.splash_damage = static_cast<float>(bullet_type->get_splash_damage());
-        btc.splash_knockback = static_cast<float>(bullet_type->get_splash_knockback());
         btc.shake        = static_cast<float>(bullet_type->get_shake());
         btc.hit_once     = bullet_type->get_hit_once();
         btc.bullet_type  = bullet_type.ptr();

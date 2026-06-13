@@ -151,15 +151,19 @@ namespace ecs {
                     }
 
 
+                    float sr = static_cast<float>(bt.bullet_type->get_splash_range());
+                    float sd = static_cast<float>(bt.bullet_type->get_splash_damage());
+                    float sk = static_cast<float>(bt.bullet_type->get_splash_knockback());
+                    
                     // 单位溅射
                     const QuadTreeComp& qt = world.get<QuadTreeComp>();
-                    qt.ptr->retrieve_circle_fn(p.value, bt.splash_range, -1, t.value,
+                    qt.ptr->retrieve_circle_fn(p.value, sr, -1, t.value,
                         [&](Object* unit_obj) -> bool {
                             if (!unit_obj) return false;
                             if (int(unit_obj->get("team")) == t.value) return false;
 
                             float dist = Vector2(unit_obj->get("global_position")).distance_to(p.value);
-                            float d = bt.splash_damage * ((4.0f + bt.splash_range - dist) / bt.splash_range);
+                            float d = sd * ((4.0f + sr - dist) / sr);
                             bool crit = bt.crit_chance > 0.0f &&
                                 static_cast<float>(std::rand()) / RAND_MAX <= bt.crit_chance;
                             if (crit) {
@@ -192,13 +196,13 @@ namespace ecs {
 
                     // 方块溅射
                     if (vars) {
-                        Call::circle_collision(p.value, bt.splash_range, [&](Object* block) -> bool {
+                        Call::circle_collision(p.value, sr, [&](Object* block) -> bool {
                             if (!block) return false;
                             if (int(block->get("team")) == t.value) return false;
 
                             float dist = (Vector2(block->get("pos")) * ConstsC::get_tile_size() +
                                 ConstsC::get_half_tile_size()).distance_to(p.value);
-                            float d = bt.splash_damage * ((4.0f + bt.splash_range - dist) / bt.splash_range);
+                            float d = sd * ((4.0f + sr - dist) / sr);
                             bool crit = bt.crit_chance > 0.0f &&
                                 static_cast<float>(std::rand()) / RAND_MAX <= bt.crit_chance;
                             if (crit) {

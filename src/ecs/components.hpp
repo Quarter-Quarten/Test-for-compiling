@@ -89,9 +89,6 @@ namespace ecs {
         float ground_unit_damage_multi = 1.0;
         float air_unit_damage_multi    = 1.0;
         float block_damage_multi       = 1.0;
-        float splash_range = 0.0;
-        float splash_damage = 0.0;
-        float splash_knockback = 0.0;
         float knockback = 0.0;
         float speed = 150.0f;
         float crit_chance = 0.0f;
