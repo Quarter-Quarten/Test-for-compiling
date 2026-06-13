@@ -81,18 +81,14 @@ namespace ecs {
 
 
     // ==================================================== 子弹 ====================================================
-    // 子弹类型配置（创建时设置，只读）
+    // 子弹类型配置（创建时设置，频繁只读）
     struct BulletTypeComp {
-        bool collide_unit  = true;
-        bool collide_block = true;
         bool hit_once = false;
         float ground_unit_damage_multi = 1.0;
         float air_unit_damage_multi    = 1.0;
         float block_damage_multi       = 1.0;
         float knockback = 0.0;
         float speed = 150.0f;
-        float crit_chance = 0.0f;
-        float shake = 0.0f;
         int   pierce_cap   = 0;
 
         BulletTypeC* bullet_type = nullptr;

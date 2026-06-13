@@ -310,7 +310,7 @@ namespace ecs {
 
                     // === 单位碰撞 ===
                     bool hit_unit = false;
-                    if (bt.collide_unit) {
+                    if (bt.bullet_type->get_collide_unit()) {
                         // 调用四叉树做圆形碰撞检测 + 回调
                         qt.ptr->retrieve_circle_fn(p.value, s.value, -1, t.value,
                             [&](Object* unit_obj) -> bool {
@@ -321,7 +321,7 @@ namespace ecs {
 
                     // === 方块碰撞 ===
                     bool hit_block = false;
-                    if (bt.collide_block && !hit_unit && Call::pos_to_tile(p.value) != Call::pos_to_tile(lp.value)) {
+                    if (bt.bullet_type->get_collide_block() && !hit_unit && Call::pos_to_tile(p.value) != Call::pos_to_tile(lp.value)) {
                         Dictionary block_inst = vars->get("block_instances");
                         Variant block_v = block_inst.get(Call::pos_to_tile(p.value), Variant());
                         if (block_v.get_type() != Variant::NIL && static_cast<int>(block_v.get("team")) != t.value) {

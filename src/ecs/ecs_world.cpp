@@ -101,8 +101,8 @@ namespace ecs {
             };
             
             collision = {
-                bullet_type->get_collide_unit(),
-                bullet_type->get_collide_block(),
+                bullet_type->get_collide(),
+                bullet_type->get_collide(),
                 static_cast<int>(bullet_type->get_pierce_cap()),
                 {}
             };
@@ -148,16 +148,12 @@ namespace ecs {
         }
 
         BulletTypeComp btc;
-        btc.collide_unit  = bullet_type->get_collide_unit();
-        btc.collide_block = bullet_type->get_collide_block();
         btc.ground_unit_damage_multi = static_cast<float>(bullet_type->get_ground_unit_damage_multi());
         btc.air_unit_damage_multi    = static_cast<float>(bullet_type->get_air_unit_damage_multi());
         btc.block_damage_multi       = static_cast<float>(bullet_type->get_block_damage_multi());
         btc.pierce_cap   = static_cast<int>(bullet_type->get_pierce_cap());
         btc.speed        = static_cast<float>(bullet_type->get_speed());
         btc.knockback    = static_cast<float>(bullet_type->get_knockback());
-        btc.crit_chance  = static_cast<float>(bullet_type->get_crit_chance());
-        btc.shake        = static_cast<float>(bullet_type->get_shake());
         btc.hit_once     = bullet_type->get_hit_once();
         btc.bullet_type  = bullet_type.ptr();
         e.set<BulletTypeComp>(btc);
