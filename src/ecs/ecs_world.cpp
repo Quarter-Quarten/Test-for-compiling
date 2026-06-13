@@ -267,9 +267,14 @@ namespace ecs {
 
     void ECSWorld::_bind_methods() {
         ClassDB::bind_method(D_METHOD("create_bullet", "position", "velocity", "damage_multi", "team", "bullet_type"), &ECSWorld::create_bullet);
+        ClassDB::bind_method(D_METHOD("create_unit", "position", "team", "rotation", "unit_type"), &ECSWorld::create_unit);
+        
         ClassDB::bind_method(D_METHOD("init", "quad_tree", "bullet_drawer", "effect_circle", "effect_rect", "effect_triangle", "point_lights"), &ECSWorld::init);
+        
         ClassDB::bind_method(D_METHOD("get_last_process_duration"), &ECSWorld::get_last_process_duration);
+        
         ClassDB::bind_method(D_METHOD("update", "delta"), &ECSWorld::update);
+        
         ClassDB::bind_method(D_METHOD("create_particle", "pos", "rota", "length", "len_rand", "pos_ease", "col_from", "col_to", "col_ease", "lifetime", "count", "scale", "scale_rand_min", "scale_to", "scale_ease", "radiate", "radiate_angle", "cone", "shape_type"), &ECSWorld::create_particle);
         ClassDB::bind_method(D_METHOD("create_torus_particle", "pos", "rota", "length", "len_rand", "pos_ease", "col_from", "col_to", "col_ease", "lifetime", "count", "scale", "scale_rand_min", "scale_to", "scale_ease", "radiate", "radiate_angle", "cone", "width_from", "width_to"), &ECSWorld::create_torus_particle);
     }
