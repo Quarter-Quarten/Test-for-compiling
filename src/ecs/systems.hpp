@@ -638,7 +638,29 @@ namespace ecs {
                 }
             });
         
+        world.system<const UnitTypeComp, const Position, const Rotation>("UnitDraw")
+            .kind(flecs::OnStore)
+            .multi_threaded(false)
+            .run([&world](flecs::iter& it) {
+                const UnitDrawer& ud = world.get<UnitDrawer>();
+                if (!ud.canvas_rid.is_valid()) return;
         
+                RenderingServer::get_singleton()->canvas_item_clear(ud.canvas_rid);
+        
+                while (it.next()) {
+                    auto units = it.field<const UnitTypeComp>(0);
+                    auto positions = it.field<const Position>(1);
+                    auto rotations = it.field<const Rotation>(2);
+        
+                    for (int i = 0; i < it.count(); ++i) {
+                        const UnitTypeComp& utc = units[i];
+                        const Position& p = positions[i];
+                        const Rotation& r = rotations[i];
+                        utc.unit_type->call("draw", r.value, p.value, 2.0,
+                                                     Color(1, 1, 1, 1), ud.canvas_rid);
+                    }
+                }
+            });
 
     }
 } // namespace ecs
