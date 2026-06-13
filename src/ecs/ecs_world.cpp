@@ -172,12 +172,20 @@ namespace ecs {
     void ECSWorld::create_unit(const Vector2& position, int team, float rotation, const Ref<UnitTypeC>& unit_type) {
         assert(unit_type.is_valid());
         flecs::entity e = world.entity();
-        e.set<Position>({position})
-         .set<Velocity>({})
-         .set<Rotation>({rotation})
-         .set<ColorComp>({Color(1, 1, 1, 1)})
-         .set<Team>({team})
-         .set<SizeValue>({static_cast<float>(unit_type->get_size())});
+        e.insert([&](Position& pos, LastPosition& lastPos, Velocity& vel, 
+                     Rotation& rot,
+                     ColorComp& color, Team& team_c,
+                     SizeValue& size) { 
+            pos = {position};
+            lastPos = {position};
+            vel = {velocity};
+            rot = {velocity.angle()};
+            
+            color = {bullet_type->get_color()};
+            team_c = {team};
+            
+            size = {static_cast<float>(unit_type->get_size())};
+        });
 
         UnitTypeComp utc;
         utc.unit_type  = unit_type.ptr();
