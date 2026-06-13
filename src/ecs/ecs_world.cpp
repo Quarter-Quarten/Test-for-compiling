@@ -149,9 +149,6 @@ namespace ecs {
         }
 
         BulletTypeComp btc;
-        btc.ground_unit_damage_multi = static_cast<float>(bullet_type->get_ground_unit_damage_multi());
-        btc.air_unit_damage_multi    = static_cast<float>(bullet_type->get_air_unit_damage_multi());
-        btc.block_damage_multi       = static_cast<float>(bullet_type->get_block_damage_multi());
         btc.pierce_cap   = static_cast<int>(bullet_type->get_pierce_cap());
         btc.speed        = static_cast<float>(bullet_type->get_speed());
         btc.knockback    = static_cast<float>(bullet_type->get_knockback());

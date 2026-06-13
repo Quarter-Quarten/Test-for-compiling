@@ -190,7 +190,7 @@ namespace ecs {
                                     }
                                 }
                             }
-                            float type_multi = is_flying ? bt.air_unit_damage_multi : bt.ground_unit_damage_multi;
+                            float type_multi = is_flying ? static_cast<float>(bt.bullet_type->get_air_unit_damage_multi()) : static_cast<float>(bt.bullet_type->get_ground_unit_damage_multi());
 
                             unit_obj->call("damaged", d * type_multi, Variant(), bd.armor_pierce, true, crit);
                             return false;
@@ -258,8 +258,8 @@ namespace ecs {
                     }
                 }
                 float type_multi = is_flying
-                    ? bt.air_unit_damage_multi
-                    : bt.ground_unit_damage_multi;
+                    ? static_cast<float>(bt.bullet_type->get_air_unit_damage_multi())
+                    : static_cast<float>(bt.bullet_type->get_ground_unit_damage_multi());
 
                 // 应用状态效果(GDScript)
                 // bt.bullet_type->_apply_bullet_status
@@ -329,7 +329,7 @@ namespace ecs {
                             int64_t id = block->get_instance_id();
                             if (!bc.collided.has(id)) {
                                 bc.collided.push_back(id);
-                                block->call("damaged", hit_damage * bt.block_damage_multi,
+                                block->call("damaged", hit_damage * static_cast<float>(bt.bullet_type->get_block_damage_multi());,
                                     Variant(), bd.armor_pierce);
                                 hit_block = true;
                                 (bc.pierce_remaining)--;
