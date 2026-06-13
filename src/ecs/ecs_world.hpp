@@ -60,5 +60,7 @@ namespace ecs {
         flecs::world world;
         int last_process_duration_;
         RID trail_canvas_rid_;
+        
+        IDPool<int> particle_ids_;
     };
 }

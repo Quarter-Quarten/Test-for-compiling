@@ -168,8 +168,6 @@ namespace ecs {
 
     // ==================================================== 粒子 ====================================================
     struct ParticleInfo {
-        static inline IDPool<int> particle_ids;
-
         Vector2 pos_from;
         Vector2 pos_to;
         float pos_ease;
@@ -262,24 +260,15 @@ namespace ecs {
         world.component<Summoned>();
         world.component<Player>();
 
-        // 单例
-        //world.component<QuadTreeComp>();
-        //world.component<BulletDrawer>();
-        //world.component<EffectCircleDrawer>();
-        //world.component<EffectRectDrawer>();
-        //world.component<EffectTriangleDrawer>();
-        //world.component<PointLightDrawer>();
-        //world.component<TrailDrawer>();
-
         // 粒子
         world.component<ParticleInfo>()
             .on_set([](flecs::entity, ParticleInfo& p) {
                 // UtilityFunctions::print("acq ", p.id);
-                p.id = ParticleInfo::particle_ids.acquire();
+                p.id = world.get_particle_ids().acquire();
             })
             .on_remove([](flecs::entity, ParticleInfo& p) {
                 // UtilityFunctions::print("rel ", p.id);
-                ParticleInfo::particle_ids.release(p.id);
+                world.get_particle_ids().release(p.id);
             });
         world.component<TorusParticleInfo>();
         world.component<CircleParticle>();
