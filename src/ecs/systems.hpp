@@ -28,7 +28,7 @@ namespace ecs {
         world.system<LastPosition*, Position, const Velocity>("MoveSystem")
             .kind(flecs::OnUpdate)
             .each([&world](LastPosition* lp, Position& p, const Velocity& v) {
-                if (lp) lp.value = p.value;
+                if (lp) lp->value = p.value;
                 p.value += v.value * world.delta_time();
             });
 
@@ -319,10 +319,7 @@ namespace ecs {
                         if (block_v.get_type() != Variant::NIL && static_cast<int>(block_v.get("team")) != t.value) {
                             Object* block = block_v;
                             int64_t id = block->get_instance_id();
-                            if (bc.collided.has(id)) break;
-                            
-                            bool already_hit = false;
-                            if (!already_hit) {
+                            if (!bc.collided.has(id)) {
                                 bc.collided.push_back(id);
                                 block->call("damaged", hit_damage * bt.block_damage_multi,
                                     Variant(), bd.armor_pierce);
