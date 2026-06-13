@@ -641,7 +641,7 @@ namespace ecs {
         world.system<const UnitTypeComp>("UnitDraw")
             .kind(flecs::OnUpdate)
             .multi_threaded(false)
-            .iter([&world](flecs::iter& it) {
+            .run([&world](flecs::iter& it) {
                 const UnitDrawer* ud = world.get<UnitDrawer>();
                 if (!ud || !ud->canvas_rid.is_valid()) return;
         
