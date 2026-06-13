@@ -149,9 +149,7 @@ namespace ecs {
         }
 
         BulletTypeComp btc;
-        btc.pierce_cap   = static_cast<int>(bullet_type->get_pierce_cap());
         btc.speed        = static_cast<float>(bullet_type->get_speed());
-        btc.knockback    = static_cast<float>(bullet_type->get_knockback());
         btc.bullet_type  = bullet_type.ptr();
         e.set<BulletTypeComp>(btc);
 

@@ -155,7 +155,9 @@ namespace ecs {
                     const float sr = static_cast<float>(bt.bullet_type->get_splash_range());
                     const float sd = static_cast<float>(bt.bullet_type->get_splash_damage());
                     const float sk = static_cast<float>(bt.bullet_type->get_splash_knockback());
+                    
                     const float crit_chance = static_cast<float>(bt.bullet_type->get_crit_chance());
+                    const float knockback = static_cast<float>(bt.bullet_type->get_knockback());
                     
                     // 单位溅射
                     const QuadTreeComp& qt = world.get<QuadTreeComp>();
@@ -173,8 +175,8 @@ namespace ecs {
                                 d = (CRIT_DMG_MULTI * (std::max(crit_chance - 1.0f, 0.0f) + 1.0f)) * d;
                             }
 
-                            if (bt.knockback > 0.0f && unit_obj->has_method("knockback")) {
-                                unit_obj->call("knockback", bt.knockback, p.value);
+                            if (knockback > 0.0f) {
+                                unit_obj->call("knockback", knockback, p.value);
                             }
 
                             d *= bd.damage_multi;
@@ -222,6 +224,7 @@ namespace ecs {
             // 辅助：子弹击中单位
             static auto _bullet_hit_unit = [](Object* unit_obj, const BulletTypeComp& bt, const Velocity& v, BulletCollision& bc, const BulletDamage& bd) {
             	const float crit_chance = static_cast<float>(bt.bullet_type->get_crit_chance());
+            	const float knockback = static_cast<float>(bt.bullet_type->get_knockback());
             	
                 // 重复碰撞检测
                 int64_t id = unit_obj->get_instance_id();
@@ -241,8 +244,8 @@ namespace ecs {
                 }
 
                 // 击退
-                if (bt.knockback > 0.0f && unit_obj->has_method("knockback_by_dir")) {
-                    unit_obj->call("knockback_by_dir", bt.knockback, v.value);
+                if (knockback > 0.0f) {
+                    unit_obj->call("knockback_by_dir", knockback, v.value);
                 }
 
                 // 判断飞行/地面单位
@@ -329,7 +332,7 @@ namespace ecs {
                             int64_t id = block->get_instance_id();
                             if (!bc.collided.has(id)) {
                                 bc.collided.push_back(id);
-                                block->call("damaged", hit_damage * static_cast<float>(bt.bullet_type->get_block_damage_multi()));,
+                                block->call("damaged", hit_damage * static_cast<float>(bt.bullet_type->get_block_damage_multi()),
                                     Variant(), bd.armor_pierce);
                                 hit_block = true;
                                 (bc.pierce_remaining)--;

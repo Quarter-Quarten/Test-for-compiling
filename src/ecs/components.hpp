@@ -86,9 +86,7 @@ namespace ecs {
     // ==================================================== 子弹 ====================================================
     // 子弹类型配置（创建时设置，频繁只读）
     struct BulletTypeComp {
-        float knockback = 0.0;
         float speed = 150.0f;
-        int   pierce_cap   = 0;
 
         BulletTypeC* bullet_type = nullptr;
     };
