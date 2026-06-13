@@ -24,6 +24,10 @@ public:
         std::lock_guard lock(mtx_);
         pool_.push(id);
     }
+    void clear() {
+        std::lock_guard lock(mtx_);
+        pool_ = {};
+    }
 };
 
 // for godot
@@ -47,10 +51,15 @@ public: \
         std::lock_guard lock(mtx_); \
         pool_.push(id); \
     } \
+    void clear() { \
+        std::lock_guard lock(mtx_); \
+        pool_ = {}; \
+    } \
 protected: \
     static void _bind_methods() { \
         ClassDB::bind_method(D_METHOD("acquire"), &IDPool##T::acquire); \
         ClassDB::bind_method(D_METHOD("release", "id"), &IDPool##T::release); \
+        ClassDB::bind_method(D_METHOD("clear"), &IDPool##T::clear); \
     } \
 };
 

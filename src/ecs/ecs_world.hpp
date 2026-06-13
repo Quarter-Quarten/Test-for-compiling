@@ -28,11 +28,6 @@ namespace ecs {
 
     int get_last_process_duration() const;
     
-    IDPool<int>& get_particle_ids() {
-    	return particle_ids_;
-    };
-    
-
     void create_bullet(
         const Vector2& position, const Vector2& velocity,
         float damage_multi, int team,
@@ -65,7 +60,5 @@ namespace ecs {
         flecs::world world;
         int last_process_duration_;
         RID trail_canvas_rid_;
-        
-        IDPool<int> particle_ids_;
     };
 }

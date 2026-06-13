@@ -12,6 +12,7 @@ using namespace godot;
 
 namespace ecs {
     ECSWorld::ECSWorld() {
+    	global::particle_ids.clear();
     }
 
     ECSWorld::~ECSWorld() {

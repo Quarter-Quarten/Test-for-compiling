@@ -13,6 +13,9 @@ using namespace godot;
 
 
 namespace ecs {
+	namespace global {
+    	IDPool<int> particle_ids;
+	}
     // ==================================================== 基础 ====================================================
     struct Position { Vector2 value; };
     struct MoveToPosition { Vector2 value; };
@@ -260,11 +263,11 @@ namespace ecs {
         world.component<ParticleInfo>()
             .on_set([](flecs::entity, ParticleInfo& p) {
                 // UtilityFunctions::print("acq ", p.id);
-                p.id = world.get_particle_ids().acquire();
+                p.id = global::particle_ids.acquire();
             })
             .on_remove([](flecs::entity, ParticleInfo& p) {
                 // UtilityFunctions::print("rel ", p.id);
-                world.get_particle_ids().release(p.id);
+                global::particle_ids.release(p.id);
             });
         world.component<TorusParticleInfo>();
         world.component<CircleParticle>();
