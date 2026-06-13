@@ -182,7 +182,7 @@ namespace ecs {
             vel = {};
             rot = {rotation};
             
-            color = {};
+            color = {Color(1, 1, 1, 1)};
             team_c = {team};
             
             utc = {unit_type.ptr()};
