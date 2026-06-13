@@ -14,7 +14,7 @@ using namespace godot;
 
 namespace ecs {
 	namespace global {
-    	IDPool<int> particle_ids;
+    	inline IDPool<int> particle_ids;
 	}
     // ==================================================== 基础 ====================================================
     struct Position { Vector2 value; };
