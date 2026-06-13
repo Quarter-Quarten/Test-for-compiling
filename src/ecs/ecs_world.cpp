@@ -78,12 +78,12 @@ namespace ecs {
         assert(bullet_type.is_valid());
 
         flecs::entity e = world.entity();
-        e.insert([&](Position& pos, LastPosition& lastPos, Velocity& vel, 
+        e.insert([&](Position& pos, LastPosition& last_pos, Velocity& vel, 
                      Rotation& rot, BulletOrigin& origin,
                      Lifetime& lifetime, ColorComp& color, Team& team_c,
                      SizeValue& size, BulletDamage& damage, BulletCollision& collision) { 
             pos = {position};
-            lastPos = {position};
+            last_pos = {position};
             vel = {velocity};
             rot = {velocity.angle()};
             origin = {position};
@@ -172,16 +172,16 @@ namespace ecs {
     void ECSWorld::create_unit(const Vector2& position, int team, float rotation, const Ref<UnitTypeC>& unit_type) {
         assert(unit_type.is_valid());
         flecs::entity e = world.entity();
-        e.insert([&](Position& pos, LastPosition& lastPos, Velocity& vel, 
+        e.insert([&](Position& pos, LastPosition& last_pos, Velocity& vel, 
                      Rotation& rot,
                      ColorComp& color, Team& team_c,
                      SizeValue& size) { 
             pos = {position};
-            lastPos = {position};
+            last_pos = {position};
             vel = {velocity};
             rot = {velocity.angle()};
             
-            color = {bullet_type->get_color()};
+            color = {unit_type->get_color()};
             team_c = {team};
             
             size = {static_cast<float>(unit_type->get_size())};
