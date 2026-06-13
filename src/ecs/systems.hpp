@@ -642,10 +642,10 @@ namespace ecs {
             .kind(flecs::OnUpdate)
             .multi_threaded(false)
             .run([&world](flecs::iter& it) {
-                const UnitDrawer* ud = world.get<UnitDrawer>();
-                if (!ud || !ud->canvas_rid.is_valid()) return;
+                const UnitDrawer& ud = world.get<UnitDrawer>();
+                if (!ud.canvas_rid.is_valid()) return;
         
-                RenderingServer::get_singleton()->canvas_item_clear(ud->canvas_rid);
+                RenderingServer::get_singleton()->canvas_item_clear(ud.canvas_rid);
         
                 while (it.next()) {
                     auto units = it.field<const UnitTypeComp>(0);
@@ -657,7 +657,7 @@ namespace ecs {
                         const Position& p = positions[i];
                         const Rotation& r = rotations[i];
                         utc.unit_type->call_deferred("_draw", r.value, p.value, 2.0,
-                                                     Color(1, 1, 1, 1), ud->canvas_rid);
+                                                     Color(1, 1, 1, 1), ud.canvas_rid);
                     }
                 }
             });
