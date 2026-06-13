@@ -55,6 +55,10 @@ namespace ecs {
     struct SizeVector { Vector2 value; };
     struct ScaleValue { float value; };
     struct ScaleVector { Vector2 value; };
+    struct ScaleVectorFromTo {
+    	Vector2 scale_from = Vector2(1, 1);
+        Vector2 scale_to = Vector2(1, 1);
+    }
 
     // 拖尾
     struct Trail {
@@ -93,8 +97,6 @@ namespace ecs {
         float crit_chance = 0.0f;
         float shake = 0.0f;
         int   pierce_cap   = 0;
-        Vector2 scale_from = Vector2(1, 1);
-        Vector2 scale_to = Vector2(1, 1);
 
         BulletTypeC* bullet_type = nullptr;
     };
@@ -235,6 +237,7 @@ namespace ecs {
         world.component<SizeVector>();
         world.component<ScaleValue>();
         world.component<ScaleVector>();
+        world.component<ScaleVectorFromTo>();
 
         world.component<Trail>();
 

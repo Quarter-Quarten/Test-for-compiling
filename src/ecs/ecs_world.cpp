@@ -120,6 +120,10 @@ namespace ecs {
 
         if (bullet_type->get_scale_from() != Vector2(1, 1) || bullet_type->get_scale_to() != Vector2(1, 1)) {
             e.set<ScaleVector>({bullet_type->get_scale_from()});
+            e.set<ScaleVectorFromTo>({
+            	bullet_type->get_scale_from(),
+            	bullet_type->get_scale_to()
+            });
         }
 
         if (bullet_type->has_trail()) {
@@ -150,8 +154,6 @@ namespace ecs {
         btc.splash_knockback = static_cast<float>(bullet_type->get_splash_knockback());
         btc.shake        = static_cast<float>(bullet_type->get_shake());
         btc.hit_once     = bullet_type->get_hit_once();
-        btc.scale_from = bullet_type->get_scale_from();
-        btc.scale_to  = bullet_type->get_scale_to();
         btc.bullet_type  = bullet_type.ptr();
         e.set<BulletTypeComp>(btc);
 

@@ -217,9 +217,7 @@ namespace ecs {
             static auto _bullet_hit_unit = [](Object* unit_obj, const BulletTypeComp& bt, const Velocity& v, BulletCollision& bc, const BulletDamage& bd) {
                 // 重复碰撞检测
                 int64_t id = unit_obj->get_instance_id();
-                for (int64_t cid : bc.collided) {
-                    if (cid == id) return false;
-                }
+                if (bc.collided.has(id)) return false;
 
                 // 伤害计算： (damage + (vel_len / speed) * cutting_damage) * damage_multi
                 float vel_len = v.value.length();
@@ -377,18 +375,18 @@ namespace ecs {
                 });
             
             // Scale变动
-            world.system<const Lifetime, ScaleVector, const BulletTypeComp>("Scaler")
+            world.system<const Lifetime, ScaleVector, const ScaleVectorFromTo>("Scaler")
                 .kind(flecs::OnUpdate)
                 .without<PointBullet>()
-                .each([&world](const Lifetime& l, ScaleVector& scl, const BulletTypeComp& bt) {
-                    scl.value = bt.scale_from.lerp(bt.scale_to, l.age / l.lifetime);
+                .each([&world](const Lifetime& l, ScaleVector& scl, const ScaleVectorFromTo& svft) {
+                    scl.value = svft.scale_from.lerp(svft.scale_to, l.age / l.lifetime);
                 });
             // PointBullet Scale变动
-            world.system<const Lifetime, ScaleVector, const BulletTypeComp, PointBullet>("PointBullerScaler")
+            world.system<const Lifetime, ScaleVector, const ScaleVectorFromTo, PointBullet>("PointBullerScaler")
                 .kind(flecs::OnUpdate)
-                .each([&world](const Lifetime& l, ScaleVector& scl, const BulletTypeComp& bt, PointBullet) {
+                .each([&world](const Lifetime& l, ScaleVector& scl, const ScaleVectorFromTo& svft, PointBullet) {
                     const float prog = sinf(l.age / l.lifetime * 3.14159265f);
-                    scl.value = bt.scale_from.lerp(bt.scale_to, prog);
+                    scl.value = svft.scale_from.lerp(svft.scale_to, prog);
                 });
         } // 子弹
 
