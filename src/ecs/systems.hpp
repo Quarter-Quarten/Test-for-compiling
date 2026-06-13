@@ -622,7 +622,7 @@ namespace ecs {
         };
 
         world.system<const Trail>("TrailDraw")
-            .kind(flecs::OnUpdate)
+            .kind(flecs::OnStore)
             .multi_threaded(false)
             .run([&world, &draw_trail](flecs::iter& it) {
                 const TrailDrawer& td = world.get<TrailDrawer>();
@@ -639,7 +639,7 @@ namespace ecs {
             });
         
         world.system<const UnitTypeComp>("UnitDraw")
-            .kind(flecs::OnUpdate)
+            .kind(flecs::OnStore)
             .multi_threaded(false)
             .run([&world](flecs::iter& it) {
                 const UnitDrawer& ud = world.get<UnitDrawer>();
@@ -656,7 +656,7 @@ namespace ecs {
                         const UnitTypeComp& utc = units[i];
                         const Position& p = positions[i];
                         const Rotation& r = rotations[i];
-                        utc.unit_type->call_deferred("_draw", r.value, p.value, 2.0,
+                        utc.unit_type->call("draw", r.value, p.value, 2.0,
                                                      Color(1, 1, 1, 1), ud.canvas_rid);
                     }
                 }
