@@ -58,7 +58,7 @@ namespace ecs {
     struct ScaleVectorFromTo {
     	Vector2 scale_from = Vector2(1, 1);
         Vector2 scale_to = Vector2(1, 1);
-    }
+    };
 
     // 拖尾
     struct Trail {
