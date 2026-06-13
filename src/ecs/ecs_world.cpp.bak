@@ -78,7 +78,6 @@ namespace ecs {
 
         flecs::entity e = world.entity();
         e.set<Position>({position})
-         .set<LastPosition>({position})
          .set<Velocity>({velocity})
          .set<Rotation>({velocity.angle()})
          .set<Lifetime>({static_cast<float>(bullet_type->get_lifetime()), 0.0f})

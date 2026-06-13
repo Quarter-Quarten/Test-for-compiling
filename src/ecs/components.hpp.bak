@@ -81,7 +81,7 @@ namespace ecs {
     struct BulletTypeComp {
         bool collide_unit  = true;
         bool collide_block = true;
-        bool hit_once = false;
+        bool  hit_once = false;
         float ground_unit_damage_multi = 1.0;
         float air_unit_damage_multi    = 1.0;
         float block_damage_multi       = 1.0;
@@ -120,6 +120,13 @@ namespace ecs {
     struct BulletOrigin {
         Vector2 value;
     };
+
+    // GDScript 侧 Bullet 对象引用索引
+    // struct GDBulletRef {
+    //     int bullet_index = -1;
+    //     int type_index = -1;
+    // };
+    
 
     // 目标标签
     struct Flying {};

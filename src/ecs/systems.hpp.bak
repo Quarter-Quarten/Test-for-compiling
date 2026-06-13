@@ -282,12 +282,12 @@ namespace ecs {
             
 
             // 子弹碰撞系统（碰撞检测 + 伤害 + 溅射/销毁）
-            world.system<const Position, const LastPosition, const Velocity, const Rotation, const Team, BulletCollision, const SizeValue,
+            world.system<const Position, const Velocity, const Rotation, const Team, BulletCollision, const SizeValue,
                 const BulletTypeComp, const BulletDamage, const BulletOrigin*>("BulletCollisionSystem")
                 .kind(flecs::OnUpdate)
                 .without<PointBullet>()
                 //.multi_threaded(false)
-                .each([&world, &ecs_world](flecs::entity e, const Position& p, const LastPosition& lp, const Velocity& v, const Rotation& r, const Team& t,
+                .each([&world, &ecs_world](flecs::entity e, const Position& p, const Velocity& v, const Rotation& r, const Team& t,
                     BulletCollision& bc, const SizeValue& s, const BulletTypeComp& bt, const BulletDamage& bd, const BulletOrigin* origin)
                 {
                     if (!bc.collide || !bc.hittable) return;
@@ -315,7 +315,7 @@ namespace ecs {
 
                     // === 方块碰撞 ===
                     bool hit_block = false;
-                    if (bt.collide_block && !hit_unit && Call::pos_to_tile(p.value) != Call::pos_to_tile(lp.value)) {
+                    if (bt.collide_block && !hit_unit && Call::pos_to_tile(p.value)) {
                         Dictionary block_inst = vars->get("block_instances");
                         Variant block_v = block_inst.get(Call::pos_to_tile(p.value), Variant());
                         if (block_v.get_type() != Variant::NIL && static_cast<int>(block_v.get("team")) != t.value) {
