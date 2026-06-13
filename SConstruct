@@ -11,9 +11,9 @@ env = SConscript("godot-cpp/SConstruct")
 env.Append(CPPPATH=["src/"])
 
 # 收集所有源文件 丑陋但能用
-sources = Glob("src/*.cpp")
+sources = Glob("src/*.cpp") + Glob("src/*.c")
 for i in range(1, 100):
-    addition = Glob("src/" + "**/" * i + "*.cpp")
+    addition = Glob("src/" + "**/" * i + "*.cpp") + Glob("src/" + "**/" * i + "*.c")
     sources += addition
 
 # 获取目标平台（通过命令行参数或自动检测）
