@@ -26,11 +26,12 @@ namespace ecs {
         world.system<LastPosition*, Position, const Velocity>("MoveSystem")
             .kind(flecs::OnUpdate)
             .multi_threaded(true)
-            .iter([&world](flecs::iter& it, Position* p, Velocity* v) {
-                const float delta = world.delta_time();
+            .iter([&world](flecs::iter& it, LastPosition* lp, Position* p, Velocity* v) {
+                const float dt = world.delta_time();
                 int32_t count = it.count();
                 for (int i = 0; i < count; i++) {
-                    p[i].value += v[i].value;
+                    lp[i].value = p[i].value;
+                    p[i].value += v[i].value * dt;
                 }
             }
 
@@ -39,7 +40,7 @@ namespace ecs {
             .kind(flecs::OnUpdate)
             .interval(ConstsC::get_tick_time())
             .multi_threaded(true)
-            .iter([](flecs::iter& it, Velocity& v, const Acceleration& a) {
+            .iter([](flecs::iter& it, Velocity* v, const Acceleration* a) {
                 const float dt = static_cast<real_t>(ConstsC::get_tick_time());
                 int32_t count = it.count();
                 for (int i = 0; i < count; i++) {
