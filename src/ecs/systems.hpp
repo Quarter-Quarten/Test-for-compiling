@@ -32,6 +32,7 @@ namespace ecs {
                 for (int i = 0; i < count; i++) {
                     p[i].value += v[i].value;
                 }
+            }
 
         // 加速度系统
         world.system<Velocity, const Acceleration>("AccelerationSystem")
@@ -46,6 +47,7 @@ namespace ecs {
                         v[i].value *= (v[i].value.length() * a[i].multiplier + (a[i].value * dt)) / v[i].value.length();
                     }
                 }
+            }
 
         // 旋转系统
         world.system<Rotation, const RotateSpeed>("RotateSystem")
