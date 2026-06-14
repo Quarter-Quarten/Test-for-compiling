@@ -26,13 +26,10 @@ namespace ecs {
         world.system<LastPosition*, Position, const Velocity>("MoveSystem")
             .kind(flecs::OnUpdate)
             .multi_threaded(true)
-            .iter([&world](flecs::iter& it, LastPosition* lp, Position* p, const Velocity* v) {
+            .each([&world](LastPosition* lp, Position* p, const Velocity* v) {
                 const float dt = world.delta_time();
-                int32_t count = it.count();
-                for (int i = 0; i < count; i++) {
-                    lp[i].value = p[i].value;
-                    p[i].value += v[i].value * dt;
-                }
+                lp.value = p.value;
+                p.value += v.value * dt;
             });
 
         // 加速度系统
@@ -40,13 +37,10 @@ namespace ecs {
             .kind(flecs::OnUpdate)
             .interval(ConstsC::get_tick_time())
             .multi_threaded(true)
-            .iter([](flecs::iter& it, Velocity* v, const Acceleration* a) {
-                const float dt = static_cast<real_t>(ConstsC::get_tick_time());
-                int32_t count = it.count();
-                for (int i = 0; i < count; i++) {
-                    if (v[i].value.x || v[i].value.y) {
-                        v[i].value *= (v[i].value.length() * a[i].multiplier + (a[i].value * dt)) / v[i].value.length();
-                    }
+            .each([](Velocity& v, const Acceleration& a) {
+                const float dt = static_cast<float>(ConstsC::get_tick_time());
+                if (v.value.x || v.value.y) {
+                    v.value *= (v.value.length() * a.multiplier + (a.value * dt)) / v.value.length();
                 }
             });
 
@@ -54,12 +48,9 @@ namespace ecs {
         world.system<Rotation, const RotateSpeed>("RotateSystem")
             .kind(flecs::OnUpdate)
             .multi_threaded(true)
-            .iter([&world](flecs::iter& it, Rotation* r, const RotateSpeed* rs) {
+            .each([&world](Rotation& r, const RotateSpeed& rs) {
                 const float dt = world.delta_time();
-                int32_t count = it.count();
-                for (int i = 0; i < count; i++) {
-                    r[i].value += rs[i].value * dt;
-                }
+                r.value += rs.value * dt;
             });
         
         // 回血系统
