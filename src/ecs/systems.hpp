@@ -311,6 +311,7 @@ namespace ecs {
                 const BulletTypeComp, const BulletDamage, const BulletOrigin*>("BulletCollisionSystem")
                 .kind(flecs::OnUpdate)
                 .without<PointBullet>()
+                .multi_threaded(true)
                 //.multi_threaded(false)
                 .each([&world, &ecs_world](flecs::entity e, const Position& p, const LastPosition& lp, const Velocity& v, const Rotation& r, const Team& t,
                     BulletCollision& bc, const SizeValue& s, const BulletTypeComp& bt, const BulletDamage& bd, const BulletOrigin* origin)
@@ -418,6 +419,7 @@ namespace ecs {
             // Circle粒子绘制
             world.system<const Lifetime, const ParticleInfo, CircleParticle>("CircleParticleDraw")
                 .kind(flecs::OnUpdate)
+                .multi_threaded(true)
                 .each([&world](flecs::entity e, const Lifetime& l, const ParticleInfo& pi, CircleParticle) {
                     float prog = l.age / pi.lifetime;
                     Color color = pi.color_from.lerp(pi.color_to, UtilityFunctions::ease(prog, pi.color_ease));
@@ -440,6 +442,7 @@ namespace ecs {
             // Triangle粒子绘制
             world.system<const Lifetime, const ParticleInfo, TriangleParticle>("TriangleParticleDraw")
                 .kind(flecs::OnUpdate)
+                .multi_threaded(true)
                 .each([&world](flecs::entity e, const Lifetime& l, const ParticleInfo& pi, TriangleParticle) {
                     float prog = l.age / pi.lifetime;
                     Color color = pi.color_from.lerp(pi.color_to, UtilityFunctions::ease(prog, pi.color_ease));
@@ -462,6 +465,7 @@ namespace ecs {
             // Rect粒子绘制
             world.system<const Lifetime, const ParticleInfo, RectParticle>("RectParticleDraw")
                 .kind(flecs::OnUpdate)
+                .multi_threaded(true)
                 .each([&world](flecs::entity e, const Lifetime& l, const ParticleInfo& pi, RectParticle) {
                     float prog = l.age / pi.lifetime;
                     Color color = pi.color_from.lerp(pi.color_to, UtilityFunctions::ease(prog, pi.color_ease));
@@ -540,6 +544,7 @@ namespace ecs {
         // 每帧更新最新点
         world.system<const Position, Trail>("TrailUpdateLatest")
             .kind(flecs::OnUpdate)
+            .multi_threaded(true)
             .each([](flecs::entity e, const Position& p, Trail& t) {
                 if (t.now_len > 0) {
                     int latest = (t.next_point - 1 + t.max_len) % t.max_len;
@@ -550,6 +555,7 @@ namespace ecs {
         // 每 3 tick 新增一个轨迹点
         world.system<const Position, Trail>("TrailTickUpdate")
             .kind(flecs::OnUpdate)
+            .multi_threaded(true)
             .interval(static_cast<real_t>(ConstsC::get_tick_time() * 3.0f))
             .each([](flecs::entity e, const Position& p, Trail& t) {
                 t.points[t.next_point] = p.value;
