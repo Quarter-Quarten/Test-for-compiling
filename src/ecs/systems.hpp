@@ -25,10 +25,13 @@ namespace ecs {
         // 移动系统
         world.system<LastPosition*, Position, const Velocity>("MoveSystem")
             .kind(flecs::OnUpdate)
-            .each([&world](LastPosition* lp, Position& p, const Velocity& v) {
-                if (lp) lp->value = p.value;
-                p.value += v.value * world.delta_time();
-            });
+            .multi_threaded(true)
+            .iter([&world](flecs::iter& it, Position* p, Velocity* v) {
+                const float delta = world.delta_time();
+                int32_t count = it.count();
+                for (int i = 0; i < count; i++) {
+                    p[i].value += v[i].value;
+                }
 
         // 加速度系统
         world.system<Velocity, const Acceleration>("AccelerationSystem")
@@ -71,7 +74,7 @@ namespace ecs {
         // 追踪系统
         world.system<const Lifetime, const Position, const HomingRange, const Team, TargetPosition, const HomingDelay*>("HomingTargetSystem")
             .interval(ConstsC::get_tick_time() / 6)
-            // .multi_threaded(false)
+            .multi_threaded(true)
             .kind(flecs::OnUpdate)
             .each([&world](const Lifetime& l, const Position& p, const HomingRange& hr, const Team& t, TargetPosition& tp, const HomingDelay* hd) {
                 const float dt = world.delta_time();

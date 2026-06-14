@@ -12,7 +12,7 @@ using namespace godot;
 
 namespace ecs {
     ECSWorld::ECSWorld() {
-    	global::init_global(&this);
+    	global::init_global(this);
     }
 
     ECSWorld::~ECSWorld() {
