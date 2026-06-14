@@ -21,8 +21,6 @@
 using namespace godot;
 
 namespace ecs {
-    class ECSWorld;
-
     static void register_systems(flecs::world &world, ECSWorld* ecs_world) {
         // 移动系统
         world.system<LastPosition*, Position, const Velocity>("MoveSystem")
@@ -140,6 +138,9 @@ namespace ecs {
 
                     // 分裂子弹
                     if (bullet_type->get_frag_bullet()) {
+                        
+                        
+                        
                         Object* bullets = Object::cast_to<Object>(world_node->get("bullets"));
                         if (bullets) {
                             for (int i = 0; i < bullet_type->get_frag_bullets(); i++) {
@@ -667,10 +668,10 @@ namespace ecs {
                 }
             });
 
-        world.system<const Player, const Position, const Team>("UpdatePlayer")
+        world.system<const Position, const Team, Player>("UpdatePlayer")
             .kind(flecs::PostFrame)
             .multi_threaded(false)
-            .each([](flecs::entity e, const Position& p, const Team& t) {
+            .each([](const Position& p, const Team& t) {
             	Call::get_vars()->call("update_player", p.value, t.value);
             	
             });
