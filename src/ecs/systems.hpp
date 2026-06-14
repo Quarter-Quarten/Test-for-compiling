@@ -638,6 +638,11 @@ namespace ecs {
                 }
             });
         
+        
+        
+        
+        
+        
         world.system<const UnitTypeComp, const Position, const Rotation>("UnitDraw")
             .kind(flecs::OnStore)
             .multi_threaded(false)
@@ -667,6 +672,7 @@ namespace ecs {
             .multi_threaded(false)
             .each([](flecs::entity e, const Position& p, const Team& t) {
             	Call::get_vars()->call("update_player", p.value, t.value);
+            	
             });
     }
 } // namespace ecs
