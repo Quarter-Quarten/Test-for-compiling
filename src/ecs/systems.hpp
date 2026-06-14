@@ -26,9 +26,9 @@ namespace ecs {
         world.system<LastPosition*, Position, const Velocity>("MoveSystem")
             .kind(flecs::OnUpdate)
             .multi_threaded(true)
-            .each([&world](LastPosition* lp, Position* p, const Velocity* v) {
+            .each([&world](LastPosition* lp, Position& p, const Velocity& v) {
                 const float dt = world.delta_time();
-                lp.value = p.value;
+                lp->value = p.value;
                 p.value += v.value * dt;
             });
 
