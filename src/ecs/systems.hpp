@@ -663,7 +663,7 @@ namespace ecs {
             });
 
         world.system<const Player, const Position, const Team>("UpdatePlayer")
-            .kind(flecs::OnStore)
+            .kind(flecs::PostFrame)
             .multi_threaded(false)
             .each([](flecs::entity e, const Position& p, const Team& t) {
             	Call::get_vars()->call("update_player", p.value, t.value)

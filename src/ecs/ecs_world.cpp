@@ -12,7 +12,7 @@ using namespace godot;
 
 namespace ecs {
     ECSWorld::ECSWorld() {
-    	global::particle_ids.clear();
+    	global::init_global();
     }
 
     ECSWorld::~ECSWorld() {
@@ -173,14 +173,16 @@ namespace ecs {
     void ECSWorld::create_unit(const Vector2& position, int team, float rotation, const Ref<UnitTypeC>& unit_type) {
         assert(unit_type.is_valid());
         flecs::entity e = world.entity();
-        e.insert([&](Position& pos, LastPosition& last_pos, Velocity& vel, 
+        e.insert([&](Position& pos, LastPosition& last_pos, MoveToPosition& move_to, Velocity& vel,
                      Rotation& rot, UnitTypeComp& utc,
                      ColorComp& color, Team& team_c,
                      SizeValue& size) { 
             pos = {position};
             last_pos = {position};
+            move_to = {position};
             vel = {};
             rot = {rotation};
+            
             
             color = {Color(1, 1, 1, 1)};
             team_c = {team};

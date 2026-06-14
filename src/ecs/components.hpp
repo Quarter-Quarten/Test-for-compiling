@@ -1,9 +1,8 @@
 #pragma once
-#include "ecs/lib/flecs.h"
 #include "tools/my_multi_mesh_c/my_multi_mesh_c.hpp"
 #include "tools/quad_tree_manager/quad_tree_manager.hpp"
-#include "ecs/tools/id_pool.hpp"
 #include "ecs/tools/static_vector.hpp"
+#include "ecs/global.hpp"
 #include "types/bullet_type_c.hpp"
 #include "types/unit_type_c.hpp"
 #include <godot_cpp/variant/vector2.hpp>
@@ -13,9 +12,6 @@ using namespace godot;
 
 
 namespace ecs {
-	namespace global {
-    	inline IDPool<int> particle_ids;
-	}
     // ==================================================== 基础 ====================================================
     struct Position { Vector2 value; };
     struct MoveToPosition { Vector2 value; };
