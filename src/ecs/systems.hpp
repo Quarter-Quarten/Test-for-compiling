@@ -37,12 +37,15 @@ namespace ecs {
         world.system<Velocity, const Acceleration>("AccelerationSystem")
             .kind(flecs::OnUpdate)
             .interval(ConstsC::get_tick_time())
-            .each([](Velocity& v, const Acceleration& a) {
-                if (v.value.x || v.value.y) {
-                    const float dt = static_cast<real_t>(ConstsC::get_tick_time());
-                    v.value *= (v.value.length() * a.multiplier + (a.value * dt)) / v.value.length();
+            .multi_threaded(true)
+            .iter([](flecs::iter& it, Velocity& v, const Acceleration& a) {
+                const float dt = static_cast<real_t>(ConstsC::get_tick_time());
+                int32_t count = it.count();
+                for (int i = 0; i < count; i++) {
+                    if (v[i].value.x || v[i].value.y) {
+                        v[i].value *= (v[i].value.length() * a[i].multiplier + (a[i].value * dt)) / v[i].value.length();
+                    }
                 }
-            });
 
         // 旋转系统
         world.system<Rotation, const RotateSpeed>("RotateSystem")
