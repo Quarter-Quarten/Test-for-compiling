@@ -674,7 +674,7 @@ namespace ecs {
         world.system<const Position, const Team, Player>("UpdatePlayer")
             .kind(flecs::PostFrame)
             .multi_threaded(false)
-            .each([](const Position& p, const Team& t) {
+            .each([](const Position& p, const Team& t, Player) {
             	Call::get_vars()->call("update_player", p.value, t.value);
             	
             });
