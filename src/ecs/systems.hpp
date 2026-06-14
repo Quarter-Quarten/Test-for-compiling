@@ -53,10 +53,14 @@ namespace ecs {
         // 旋转系统
         world.system<Rotation, const RotateSpeed>("RotateSystem")
             .kind(flecs::OnUpdate)
-            .each([&world](Rotation& r, const RotateSpeed& rs) {
+            .multi_threaded(true)
+            .iter([&world](flecs::iter& it, Rotation* r, const RotateSpeed* rs) {
                 const float dt = world.delta_time();
-                r.value += rs.value * static_cast<real_t>(dt);
-            });
+                int32_t count = it.count();
+                for (int i = 0; i < count; i++) {
+                    r[i].value += rs[i].value * dt;
+                }
+            }
         
         // 回血系统
         world.system<Health, const TickHealAmount>("RotateSystem")
