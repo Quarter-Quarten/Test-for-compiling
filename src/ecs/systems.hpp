@@ -26,14 +26,14 @@ namespace ecs {
         world.system<LastPosition*, Position, const Velocity>("MoveSystem")
             .kind(flecs::OnUpdate)
             .multi_threaded(true)
-            .iter([&world](flecs::iter& it, LastPosition* lp, Position* p, Velocity* v) {
+            .iter([&world](flecs::iter& it, LastPosition* lp, Position* p, const Velocity* v) {
                 const float dt = world.delta_time();
                 int32_t count = it.count();
                 for (int i = 0; i < count; i++) {
                     lp[i].value = p[i].value;
                     p[i].value += v[i].value * dt;
                 }
-            }
+            };
 
         // 加速度系统
         world.system<Velocity, const Acceleration>("AccelerationSystem")
@@ -48,7 +48,7 @@ namespace ecs {
                         v[i].value *= (v[i].value.length() * a[i].multiplier + (a[i].value * dt)) / v[i].value.length();
                     }
                 }
-            }
+            };
 
         // 旋转系统
         world.system<Rotation, const RotateSpeed>("RotateSystem")
@@ -60,12 +60,13 @@ namespace ecs {
                 for (int i = 0; i < count; i++) {
                     r[i].value += rs[i].value * dt;
                 }
-            }
+            };
         
         // 回血系统
         world.system<Health, const TickHealAmount>("RotateSystem")
             .interval(ConstsC::get_tick_time())
             .kind(flecs::OnUpdate)
+            .multi_threaded(true)
             .each([](Health& h, const TickHealAmount& tha) {
                 h.current += tha.value;
             });
@@ -73,6 +74,7 @@ namespace ecs {
         // Lifetime系统
         world.system<Lifetime>("LifetimeSystem")
             .kind(flecs::OnUpdate)
+            .multi_threaded(true)
             .each([&](flecs::entity e, Lifetime& l) {
                 const float dt = world.delta_time();
                 l.age += dt;
